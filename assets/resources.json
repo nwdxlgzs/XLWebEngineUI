@@ -1,0 +1,6 @@
+{
+  "schema": 1,
+  "resources": [
+    {"id": 1, "name": "icu-data", "dependency": "icu", "path": "source/data/in/icudt79l.dat", "transform": "chromium-common", "alignment": 16}
+  ]
+}

@@ -1,0 +1,440 @@
+{
+  "schema": 1,
+  "checked_on": "2026-11-02",
+  "dependencies": {
+    "brotli": {
+      "name": "brotli",
+      "repository": "https://github.com/google/brotli",
+      "revision": "v1.2.1",
+      "commit": "db24a98aed38a16de78cc05ca15cdd8dc2a0d92d",
+      "license": "MIT",
+      "license_files": [
+        "LICENSE"
+      ],
+      "purpose": "fonts,compression",
+      "patches": [],
+      "selected_license": "MIT",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2026-10-21T13:10:51+00:00",
+      "archive": "brotli-db24a98aed38.tar.gz",
+      "archive_root": "brotli-db24a98aed38a16de78cc05ca15cdd8dc2a0d92d",
+      "sha256": "113b9685dfc14dd2f3360d077283266eec2fbdfb0fe3e5600f11be151da0d68e",
+      "bytes": 646758,
+      "urls": [
+        "https://codeload.github.com/google/brotli/tar.gz/db24a98aed38a16de78cc05ca15cdd8dc2a0d92d"
+      ],
+      "hash_authority": "SHA256 of bytes fetched from official repository at locked commit"
+    },
+    "freetype": {
+      "name": "freetype",
+      "repository": "https://github.com/freetype/freetype",
+      "revision": "VER-2-15-0",
+      "commit": "37515cf56ba3349656049edbed89ffc6f6466f2d",
+      "license": "FTL",
+      "license_files": [
+        "LICENSE.TXT",
+        "docs/FTL.TXT"
+      ],
+      "purpose": "fonts",
+      "patches": [],
+      "selected_license": "FTL",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2026-10-11T20:46:16+00:00",
+      "archive": "freetype-37515cf56ba3.tar.gz",
+      "archive_root": "freetype-37515cf56ba3349656049edbed89ffc6f6466f2d",
+      "sha256": "9efee8b0508e142f38d1c7e2e192d3e5041aa4bbf6c2ab1a901518211f76a914",
+      "bytes": 2594500,
+      "urls": [
+        "https://codeload.github.com/freetype/freetype/tar.gz/37515cf56ba3349656049edbed89ffc6f6466f2d"
+      ],
+      "hash_authority": "SHA256 of bytes fetched from official repository at locked commit"
+    },
+    "harfbuzz": {
+      "name": "harfbuzz",
+      "repository": "https://github.com/harfbuzz/harfbuzz",
+      "revision": "15.0.0",
+      "commit": "35f656a1a2bab548ea7f54a6dd3fba2b09680d14",
+      "license": "MIT",
+      "license_files": [
+        "COPYING"
+      ],
+      "purpose": "text-shaping",
+      "patches": [],
+      "selected_license": "MIT",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2026-10-22T16:37:23.443800+00:00",
+      "archive": "harfbuzz-15.0.0.tar.xz",
+      "archive_root": "harfbuzz-15.0.0",
+      "sha256": "968536e9abd782f07f7954044c0c4020199fcdd39b41d221ec42d2a3be4a44df",
+      "bytes": 20396372,
+      "urls": [
+        "https://github.com/harfbuzz/harfbuzz/releases/download/15.0.0/harfbuzz-15.0.0.tar.xz"
+      ],
+      "hash_authority": "GitHub release asset digest"
+    },
+    "icu": {
+      "name": "icu",
+      "repository": "https://github.com/unicode-org/icu",
+      "revision": "release-79.1",
+      "commit": "ddc6b66926bfac6036144ca9902992a0d6d50af9",
+      "license": "Unicode-3.0",
+      "license_files": [
+        "LICENSE"
+      ],
+      "purpose": "unicode,text",
+      "patches": [
+        "third_party/patches/icu-chromium-break-data.json"
+      ],
+      "selected_license": "Unicode-3.0",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2026-10-22T15:02:04+00:00",
+      "archive": "icu4c-79.1-sources.tgz",
+      "archive_root": "icu",
+      "sha256": "06fa63ecb521048f8082f12ad988f6b678d90cbd88aafce24cbc94902b191d99",
+      "bytes": 28162455,
+      "urls": [
+        "https://github.com/unicode-org/icu/releases/download/release-79.1/icu4c-79.1-sources.tgz"
+      ],
+      "hash_authority": "GitHub release asset digest"
+    },
+    "lexbor": {
+      "name": "lexbor",
+      "repository": "https://github.com/lexbor/lexbor",
+      "revision": "v3.0.1",
+      "commit": "7e278c0188489bfce6b71ced0cc900cbb31e6244",
+      "license": "Apache-2.0",
+      "license_files": [
+        "LICENSE"
+      ],
+      "purpose": "html,dom,css-candidate",
+      "patches": [
+        "third_party/patches/lexbor-focus-parser.json",
+        "third_party/patches/lexbor-selector-retry.json",
+        "third_party/patches/lexbor-empty-inline-style.json"
+      ],
+      "selected_license": "Apache-2.0",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2026-09-07T16:21:00+00:00",
+      "archive": "lexbor-7e278c018848.tar.gz",
+      "archive_root": "lexbor-7e278c0188489bfce6b71ced0cc900cbb31e6244",
+      "sha256": "be82eb87cb8929cdeac4d1e0b2d31dfe5f6a35ba0ab6a259519a45d6c08ad3aa",
+      "bytes": 5778879,
+      "urls": [
+        "https://codeload.github.com/lexbor/lexbor/tar.gz/7e278c0188489bfce6b71ced0cc900cbb31e6244"
+      ],
+      "hash_authority": "SHA256 of bytes fetched from official repository at locked commit"
+    },
+    "libjpeg-turbo": {
+      "name": "libjpeg-turbo",
+      "repository": "https://github.com/libjpeg-turbo/libjpeg-turbo",
+      "revision": "3.2.1",
+      "commit": "7b4993786d856cbccabfc0ed2f923ba000e326cc",
+      "license": "BSD-3-Clause AND IJG AND Zlib",
+      "license_files": [
+        "LICENSE.md",
+        "README.ijg"
+      ],
+      "purpose": "images",
+      "patches": [],
+      "selected_license": "BSD-3-Clause AND IJG AND Zlib",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2026-10-26T16:31:39+00:00",
+      "archive": "libjpeg-turbo-7b4993786d85.tar.gz",
+      "archive_root": "libjpeg-turbo-7b4993786d856cbccabfc0ed2f923ba000e326cc",
+      "sha256": "e10ff4ce2943a9021f9b0398fe00029915dd4eaf32c7560e36305341ec826735",
+      "bytes": 2550813,
+      "urls": [
+        "https://codeload.github.com/libjpeg-turbo/libjpeg-turbo/tar.gz/7b4993786d856cbccabfc0ed2f923ba000e326cc"
+      ],
+      "hash_authority": "SHA256 of bytes fetched from official repository at locked commit"
+    },
+    "libpng": {
+      "name": "libpng",
+      "repository": "https://github.com/pnggroup/libpng",
+      "revision": "v1.6.59",
+      "commit": "cd952f49f95bb27154ae77dbb103032d95f6e580",
+      "license": "Libpng",
+      "license_files": [
+        "LICENSE"
+      ],
+      "purpose": "images",
+      "patches": [],
+      "selected_license": "Libpng",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2026-09-28T20:58:10+00:00",
+      "archive": "libpng-cd952f49f95b.tar.gz",
+      "archive_root": "libpng-cd952f49f95bb27154ae77dbb103032d95f6e580",
+      "sha256": "ef1bccad2b2a58eb3c09e06ffe3b72b8604abda8b5011e4c4bb5391989040f26",
+      "bytes": 1601579,
+      "urls": [
+        "https://codeload.github.com/pnggroup/libpng/tar.gz/cd952f49f95bb27154ae77dbb103032d95f6e580"
+      ],
+      "hash_authority": "SHA256 of bytes fetched from official repository at locked commit"
+    },
+    "libvpx": {
+      "name": "libvpx",
+      "repository": "https://github.com/webmproject/libvpx",
+      "revision": "v1.17.0",
+      "commit": "6df3ec34557879fff673706f4a1d9fbd0f3a6f0e",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        "LICENSE",
+        "PATENTS"
+      ],
+      "purpose": "vp8,vp9",
+      "patches": [],
+      "selected_license": "BSD-3-Clause",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2026-08-20T19:06:35+00:00",
+      "archive": "libvpx-6df3ec345578.tar.gz",
+      "archive_root": "libvpx-6df3ec34557879fff673706f4a1d9fbd0f3a6f0e",
+      "sha256": "073bd6202e4c55c8cb759abbb123aecd4cc8d99f52ba27af790178cfb1108423",
+      "bytes": 5675704,
+      "urls": [
+        "https://codeload.github.com/webmproject/libvpx/tar.gz/6df3ec34557879fff673706f4a1d9fbd0f3a6f0e"
+      ],
+      "hash_authority": "SHA256 of bytes fetched from official repository at locked commit"
+    },
+    "libwebm": {
+      "name": "libwebm",
+      "repository": "https://github.com/webmproject/libwebm",
+      "revision": "libwebm-1.0.0.32",
+      "commit": "f2a982d748b80586ae53b89a2e6ebbc305848b8c",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        "LICENSE.TXT",
+        "PATENTS.TXT"
+      ],
+      "purpose": "webm-demux",
+      "patches": [],
+      "selected_license": "BSD-3-Clause",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2025-06-24T22:18:18+00:00",
+      "archive": "libwebm-f2a982d748b8.tar.gz",
+      "archive_root": "libwebm-f2a982d748b80586ae53b89a2e6ebbc305848b8c",
+      "sha256": "796857525e8b02ee6725f83c5f1e435b01b6aa57aedbe3879a9057ad1d290bec",
+      "bytes": 500823,
+      "urls": [
+        "https://codeload.github.com/webmproject/libwebm/tar.gz/f2a982d748b80586ae53b89a2e6ebbc305848b8c"
+      ],
+      "hash_authority": "SHA256 of bytes fetched from official repository at locked commit"
+    },
+    "libwebp": {
+      "name": "libwebp",
+      "repository": "https://github.com/webmproject/libwebp",
+      "revision": "v1.6.0",
+      "commit": "4fa21912338357f89e4fd51cf2368325b59e9bd9",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        "COPYING",
+        "PATENTS"
+      ],
+      "purpose": "images",
+      "patches": [],
+      "selected_license": "BSD-3-Clause",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2025-07-08T00:20:00+00:00",
+      "archive": "libwebp-4fa219123383.tar.gz",
+      "archive_root": "libwebp-4fa21912338357f89e4fd51cf2368325b59e9bd9",
+      "sha256": "923f3382a47a2af185c3240c954cf004428b237bd7317413a95146d01eb4b94b",
+      "bytes": 3834766,
+      "urls": [
+        "https://codeload.github.com/webmproject/libwebp/tar.gz/4fa21912338357f89e4fd51cf2368325b59e9bd9"
+      ],
+      "hash_authority": "SHA256 of bytes fetched from official repository at locked commit"
+    },
+    "ogg": {
+      "name": "ogg",
+      "repository": "https://github.com/xiph/ogg",
+      "revision": "v1.3.6",
+      "commit": "be05b13e98b048f0b5a0f5fa8ce514d56db5f822",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        "COPYING"
+      ],
+      "purpose": "vorbis-build-dependency",
+      "patches": [],
+      "selected_license": "BSD-3-Clause",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2025-06-16T15:55:41+00:00",
+      "archive": "ogg-be05b13e98b0.tar.gz",
+      "archive_root": "ogg-be05b13e98b048f0b5a0f5fa8ce514d56db5f822",
+      "sha256": "b2ff5c003e5697507169f7d614d64dc4e8bf030c85ad081bec75c164566f8246",
+      "bytes": 254382,
+      "urls": [
+        "https://codeload.github.com/xiph/ogg/tar.gz/be05b13e98b048f0b5a0f5fa8ce514d56db5f822"
+      ],
+      "hash_authority": "SHA256 of bytes fetched from official repository at locked commit"
+    },
+    "opus": {
+      "name": "opus",
+      "repository": "https://github.com/xiph/opus",
+      "revision": "v1.6.1",
+      "commit": "22244de5a79bd1d6d623c32e72bf1954b56235be",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        "COPYING"
+      ],
+      "purpose": "audio",
+      "patches": [],
+      "selected_license": "BSD-3-Clause",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2026-01-13T20:16:34+00:00",
+      "archive": "opus-22244de5a79b.tar.gz",
+      "archive_root": "opus-22244de5a79bd1d6d623c32e72bf1954b56235be",
+      "sha256": "3267aa969b2b26542417f57819a5bc25d5079355300307dd2dddc7c704aed418",
+      "bytes": 4888967,
+      "urls": [
+        "https://codeload.github.com/xiph/opus/tar.gz/22244de5a79bd1d6d623c32e72bf1954b56235be"
+      ],
+      "hash_authority": "SHA256 of bytes fetched from official repository at locked commit"
+    },
+    "quickjs-ng": {
+      "name": "quickjs-ng",
+      "repository": "https://github.com/quickjs-ng/quickjs",
+      "revision": "v0.18.0",
+      "commit": "d7215b0ad3fc2c562e8317fd9bca058fd4863804",
+      "license": "MIT",
+      "license_files": [
+        "LICENSE"
+      ],
+      "purpose": "javascript-candidate",
+      "patches": [],
+      "selected_license": "MIT",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2026-11-01T09:52:03+00:00",
+      "archive": "quickjs-ng-d7215b0ad3fc.tar.gz",
+      "archive_root": "quickjs-d7215b0ad3fc2c562e8317fd9bca058fd4863804",
+      "sha256": "a49defe70cbcae9226d9fac025af116e87ebae2440dcff1ca3c80b79e1cdef0b",
+      "bytes": 910727,
+      "urls": [
+        "https://codeload.github.com/quickjs-ng/quickjs/tar.gz/d7215b0ad3fc2c562e8317fd9bca058fd4863804"
+      ],
+      "hash_authority": "SHA256 of bytes fetched from official repository at locked commit"
+    },
+    "sdl3": {
+      "name": "sdl3",
+      "repository": "https://github.com/libsdl-org/SDL",
+      "revision": "release-3.4.18",
+      "commit": "829a65d769d935c4852f8159e964312c0957260a",
+      "license": "Zlib",
+      "license_files": [
+        "LICENSE.txt"
+      ],
+      "purpose": "window,input,audio",
+      "patches": [
+        "third_party/patches/sdl3-private-dynapi.json"
+      ],
+      "selected_license": "Zlib",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2024-03-14T14:22:23+00:00",
+      "archive": "SDL3-3.4.18.tar.gz",
+      "archive_root": "SDL3-3.4.18",
+      "sha256": "9c75cf16330322c217dedd2e0609f1124f1b54b8633e763467b4684d0f4334a3",
+      "bytes": 15651004,
+      "urls": [
+        "https://github.com/libsdl-org/SDL/releases/download/release-3.4.18/SDL3-3.4.18.tar.gz"
+      ],
+      "hash_authority": "GitHub release asset digest"
+    },
+    "skia": {
+      "name": "skia",
+      "repository": "https://github.com/google/skia",
+      "revision": "c40d8c9ce6295b8d21a6ad6ef95522729bbadba7",
+      "commit": "c40d8c9ce6295b8d21a6ad6ef95522729bbadba7",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        "LICENSE"
+      ],
+      "purpose": "graphics",
+      "patches": [
+        "third_party/patches/skia-private-dependencies.json",
+        "third_party/patches/skia-win7-dwrite.json",
+        "third_party/patches/skia-win7-wic.json",
+        "third_party/patches/skia-icu-lifetime.json",
+        "third_party/patches/skia-optional-d3dcompiler.json",
+        "third_party/patches/skia-win7-d3d-runtime.json"
+      ],
+      "selected_license": "BSD-3-Clause",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2026-11-02T15:23:55+00:00",
+      "archive": "skia-c40d8c9ce629.tar.gz",
+      "archive_root": "skia-c40d8c9ce6295b8d21a6ad6ef95522729bbadba7",
+      "sha256": "e20eec5e44dc109beb58f904c46e52199434b3cca2e8258b1ed3da96f83b5c62",
+      "bytes": 80125632,
+      "urls": [
+        "https://codeload.github.com/google/skia/tar.gz/c40d8c9ce6295b8d21a6ad6ef95522729bbadba7"
+      ],
+      "hash_authority": "SHA256 of bytes fetched from official repository at locked commit"
+    },
+    "vorbis": {
+      "name": "vorbis",
+      "repository": "https://github.com/xiph/vorbis",
+      "revision": "v1.3.7",
+      "commit": "0657aee69dec8508a0011f47f3b69d7538e9d262",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        "COPYING"
+      ],
+      "purpose": "audio",
+      "patches": [],
+      "selected_license": "BSD-3-Clause",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2020-07-04T06:12:30+00:00",
+      "archive": "vorbis-0657aee69dec.tar.gz",
+      "archive_root": "vorbis-0657aee69dec8508a0011f47f3b69d7538e9d262",
+      "sha256": "6ccc3fa4cfd3072f9a772025cc8fd712098d081c00171b09b6627ffced7faa88",
+      "bytes": 1235008,
+      "urls": [
+        "https://codeload.github.com/xiph/vorbis/tar.gz/0657aee69dec8508a0011f47f3b69d7538e9d262"
+      ],
+      "hash_authority": "SHA256 of bytes fetched from official repository at locked commit"
+    },
+    "zlib": {
+      "name": "zlib",
+      "repository": "https://github.com/madler/zlib",
+      "revision": "v1.3.2",
+      "commit": "da607da739fa6047df13e66a2af6b8bec7c2a498",
+      "license": "Zlib",
+      "license_files": [
+        "LICENSE"
+      ],
+      "purpose": "compression",
+      "patches": [],
+      "selected_license": "Zlib",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2026-02-17T13:01:19+00:00",
+      "archive": "zlib-da607da739fa.tar.gz",
+      "archive_root": "zlib-da607da739fa6047df13e66a2af6b8bec7c2a498",
+      "sha256": "b9258cf6254e7f7c37f1cd61dba943a1c5ea3cff5718c789834dac359094f5f7",
+      "bytes": 1567269,
+      "urls": [
+        "https://codeload.github.com/madler/zlib/tar.gz/da607da739fa6047df13e66a2af6b8bec7c2a498"
+      ],
+      "hash_authority": "SHA256 of bytes fetched from official repository at locked commit"
+    },
+    "zstd": {
+      "name": "zstd",
+      "repository": "https://github.com/facebook/zstd",
+      "revision": "v1.5.7",
+      "commit": "f8745da6ff1ad1e7bab384bd1f9d742439278e99",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        "LICENSE"
+      ],
+      "purpose": "embedded-resources",
+      "patches": [],
+      "selected_license": "BSD-3-Clause",
+      "checked_on": "2026-11-02",
+      "archive_timestamp": "2025-02-19T00:04:24+00:00",
+      "archive": "zstd-f8745da6ff1a.tar.gz",
+      "archive_root": "zstd-f8745da6ff1ad1e7bab384bd1f9d742439278e99",
+      "sha256": "4b0bd1f0cfb25e61b9103c35f27395530ff5b4c0d2513a00fd745849e85ea52c",
+      "bytes": 2453329,
+      "urls": [
+        "https://codeload.github.com/facebook/zstd/tar.gz/f8745da6ff1ad1e7bab384bd1f9d742439278e99"
+      ],
+      "hash_authority": "SHA256 of bytes fetched from official repository at locked commit"
+    }
+  }
+}

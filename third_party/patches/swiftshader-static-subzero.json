@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "description": "Build a private static Vulkan ICD with upstream Subzero Reactor; do not configure unused LLVM backends or emit misleading DLL/ICD aliases",
+  "files": [
+    {
+      "file": "third_party/llvm-subzero/build/Linux/include/llvm/Config/config.h",
+      "replacements": [
+        {
+          "before": "#define HAVE_BACKTRACE 1",
+          "after": "/* XLWebEngineUI: musl does not provide glibc execinfo/backtrace. */\n#if defined(__GLIBC__)\n#define HAVE_BACKTRACE 1\n#endif"
+        },
+        {
+          "before": "#define HAVE_EXECINFO_H 1",
+          "after": "#if defined(__GLIBC__)\n#define HAVE_EXECINFO_H 1\n#endif"
+        },
+        {
+          "before": "#define HAVE_MALLINFO 1",
+          "after": "/* XLWebEngineUI: the checked-in Linux config must also support musl. */\n#if defined(__GLIBC__)\n#define HAVE_MALLINFO 1\n#endif"
+        }
+      ]
+    },
+    {
+      "file": "CMakeLists.txt",
+      "replacements": [
+        {
+          "before": "add_subdirectory(${THIRD_PARTY_DIR}/llvm-${SWIFTSHADER_LLVM_VERSION} EXCLUDE_FROM_ALL)\nset_target_properties(llvm PROPERTIES FOLDER \"third_party\")",
+          "after": "if(REACTOR_BACKEND STREQUAL \"LLVM\")\n    add_subdirectory(${THIRD_PARTY_DIR}/llvm-${SWIFTSHADER_LLVM_VERSION} EXCLUDE_FROM_ALL)\n    set_target_properties(llvm PROPERTIES FOLDER \"third_party\")\nendif()"
+        }
+      ]
+    },
+    {
+      "file": "src/Reactor/CMakeLists.txt",
+      "replacements": [
+        {
+          "before": "add_library(ReactorLLVM STATIC EXCLUDE_FROM_ALL",
+          "after": "if(REACTOR_BACKEND STREQUAL \"LLVM\")\nadd_library(ReactorLLVM STATIC EXCLUDE_FROM_ALL"
+        },
+        {
+          "before": "# ReactorLLVMSubmodule library\n",
+          "after": "endif() # XLWebEngineUI: compile only selected Reactor\n# ReactorLLVMSubmodule library\nif(REACTOR_BACKEND STREQUAL \"LLVM-Submodule\")\n"
+        },
+        {
+          "before": "target_link_libraries(ReactorLLVMSubmodule\n    PRIVATE\n        ${llvm_libs}\n        ${REACTOR_PRIVATE_LINK_LIBRARIES}\n)\n",
+          "after": "target_link_libraries(ReactorLLVMSubmodule\n    PRIVATE\n        ${llvm_libs}\n        ${REACTOR_PRIVATE_LINK_LIBRARIES}\n)\n\nendif()\n"
+        }
+      ]
+    },
+    {
+      "file": "src/Vulkan/CMakeLists.txt",
+      "replacements": [
+        {
+          "before": "add_library(vk_swiftshader SHARED",
+          "after": "add_library(vk_swiftshader STATIC"
+        },
+        {
+          "before": "set_shared_library_export_map(vk_swiftshader ${CMAKE_CURRENT_SOURCE_DIR})",
+          "after": "# XLWebEngineUI: real static ICD, no DLL aliases or external JSON manifest.\nreturn()"
+        }
+      ]
+    },
+    {
+      "file": "third_party/llvm-subzero/include/llvm/Support/Compiler.h",
+      "replacements": [
+        {
+          "before": "#define LLVM_DUMP_METHOD LLVM_ATTRIBUTE_NOINLINE LLVM_ATTRIBUTE_USED",
+          "after": "// XLWebEngineUI: private static LLVM; no COFF /include of unprefixed debugger helpers.\n#if defined(_MSC_VER)\n#define LLVM_DUMP_METHOD LLVM_ATTRIBUTE_NOINLINE\n#else\n#define LLVM_DUMP_METHOD LLVM_ATTRIBUTE_NOINLINE LLVM_ATTRIBUTE_USED\n#endif"
+        }
+      ]
+    }
+  ]
+}

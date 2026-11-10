@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "upstream": "Skia c40d8c9ce6295b8d21a6ad6ef95522729bbadba7",
+  "file": "src/ports/SkImageGeneratorWIC.cpp",
+  "description": "Expose immutable WIC pixel-format GUID declarations while compiling for Win7. The macro is limited to the SDK include and restored immediately; actual WIC creation/conversion HRESULT fallbacks remain upstream.",
+  "replacements": [
+    {
+      "before": "#include <wincodec.h>",
+      "after": "#pragma push_macro(\"_WIN7_PLATFORM_UPDATE\")\n#ifndef _WIN7_PLATFORM_UPDATE\n#define _WIN7_PLATFORM_UPDATE 1\n#endif\n#include <wincodec.h>\n#pragma pop_macro(\"_WIN7_PLATFORM_UPDATE\")"
+    }
+  ]
+}

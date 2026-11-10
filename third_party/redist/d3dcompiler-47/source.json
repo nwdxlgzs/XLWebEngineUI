@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "name": "Microsoft D3DCompiler 47 redistributable",
+  "version": "6.3.9600.16384",
+  "target": "windows-x64",
+  "file": "windows-x64/d3dcompiler_47.dll",
+  "bytes": 4173928,
+  "sha256": "e994847e01a6f1e4cbdc5a864616ac262f67ee4f14db194984661a8d927ab7f4",
+  "source": "Microsoft Windows SDK 8.1 / Redist/D3D/x64/d3dcompiler_47.dll",
+  "source_location": "C:/Program Files (x86)/Windows Kits/8.1/Redist/D3D/x64/d3dcompiler_47.dll",
+  "license": "Microsoft Windows SDK 8.1 redistributable binary (proprietary)",
+  "license_authority": "https://learn.microsoft.com/en-us/windows/win32/directx-sdk--august-2009-",
+  "authenticode": {
+    "verified_on": "2026-11-04",
+    "status": "Valid",
+    "publisher": "Microsoft Corporation"
+  },
+  "usage": "Optional, unmodified, application-local binary; never install into the system directory. Not statically linked; deleting this SDK copy must not prevent SDK loading. Other capable backends remain available.",
+  "platform_evidence": "Host import check and actual shader tests; Windows 7 runtime is not yet verified."
+}

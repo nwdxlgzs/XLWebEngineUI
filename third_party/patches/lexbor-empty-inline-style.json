@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "upstream": "Lexbor 7e278c0188489bfce6b71ced0cc900cbb31e6244",
+  "file": "source/lexbor/style/html/interfaces/element.c",
+  "description": "Allow replacing/removing an inline style list after framework-owned declarations leave its Lexbor cascade empty. Preserve the upstream list ownership and ordinary nonempty removal path.",
+  "replacements": [
+    {
+      "before": "    status = lexbor_avl_foreach(doc->css->styles, &element->style,\n                                lxb_style_html_element_steps_remove_my_cb,\n                                &context);\n    if (status != LXB_STATUS_OK) {\n        return status;\n    }\n",
+      "after": "    /* XLWebEngineUI: a valid inline list may have no cascade entries when\n     * its declarations are evaluated by the framework (for example colors).\n     * Removing or replacing it must still release the list and succeed. */\n    if (element->style != NULL) {\n        status = lexbor_avl_foreach(doc->css->styles, &element->style,\n                                    lxb_style_html_element_steps_remove_my_cb,\n                                    &context);\n        if (status != LXB_STATUS_OK) {\n            return status;\n        }\n    }\n"
+    }
+  ]
+}

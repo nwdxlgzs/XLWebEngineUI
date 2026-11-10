@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "file": "src/libANGLE/renderer/d3d/HLSLCompiler.cpp",
+  "description": "Optional FXC uses engine/system absolute paths and rejects incomplete DLL entry points without assertions",
+  "replacements": [
+    {
+      "before": "#include <array>",
+      "after": "#include <array>\n#include <cwchar>"
+    },
+    {
+      "before": "namespace\n{\n#if ANGLE_APPEND_ASSEMBLY_TO_SHADER_DEBUG_INFO",
+      "after": "namespace\n{\n// XLWebEngineUI: optional FXC is loaded only from engine/system absolute paths.\nstatic HMODULE xlLoadOptionalCompiler()\n{\n    HMODULE owner = nullptr;\n    wchar_t path[32768]{};\n    if (GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |\n                          GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,\n                          reinterpret_cast<LPCWSTR>(&xlLoadOptionalCompiler), &owner))\n    {\n        const DWORD length = GetModuleFileNameW(owner, path, 32768);\n        if (length && length < 32768)\n        {\n            wchar_t *slash = wcsrchr(path, L'\\\\');\n            if (slash && (slash - path) + 21 < 32768)\n            {\n                wcscpy(slash + 1, L\"d3dcompiler_47.dll\");\n                if (HMODULE module = LoadLibraryW(path)) return module;\n            }\n        }\n    }\n    const UINT length = GetSystemDirectoryW(path, 32768);\n    if (!length || length + 22 >= 32768) return nullptr;\n    wcscat(path, L\"\\\\d3dcompiler_47.dll\");\n    return LoadLibraryW(path);\n}\n\n#if ANGLE_APPEND_ASSEMBLY_TO_SHADER_DEBUG_INFO"
+    },
+    {
+      "before": "mD3DCompilerModule = LoadLibraryA(D3DCOMPILER_DLL_A);",
+      "after": "mD3DCompilerModule = xlLoadOptionalCompiler();"
+    },
+    {
+      "before": "reinterpret_cast<pD3DCompile>(GetProcAddress(mD3DCompilerModule, \"D3DCompile\"));\n    ASSERT(mD3DCompileFunc);",
+      "after": "reinterpret_cast<pD3DCompile>(GetProcAddress(mD3DCompilerModule, \"D3DCompile\"));\n    ANGLE_CHECK_HR(context, mD3DCompileFunc, \"Optional FXC has no D3DCompile.\", E_NOINTERFACE);"
+    },
+    {
+      "before": "    ASSERT(mD3DDisassembleFunc);",
+      "after": "    ANGLE_CHECK_HR(context, mD3DDisassembleFunc, \"Optional FXC has no D3DDisassemble.\", E_NOINTERFACE);"
+    }
+  ]
+}

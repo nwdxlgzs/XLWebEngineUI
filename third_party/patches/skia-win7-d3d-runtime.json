@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "description": "Optional Windows D3D/DXGI runtime entry points and per-device shader compiler callback; keep Win7 fallback without DXC imports in Skia",
+  "files": [
+    {
+      "file": "src/gpu/ganesh/d3d/GrD3DGpu.cpp",
+      "replacements": [
+        {
+          "before": "#include <DXProgrammableCapture.h>\n",
+          "after": "// XLWebEngineUI: expose the immutable COM declaration without raising the OS target.\n#pragma push_macro(\"NTDDI_VERSION\")\n#undef NTDDI_VERSION\n#define NTDDI_VERSION NTDDI_WINBLUE\n#include <DXProgrammableCapture.h>\n#pragma pop_macro(\"NTDDI_VERSION\")\n\n// XLWebEngineUI: runtime-only optional Windows API; no hard DLL import.\ntemplate<class... Args>\nstatic HRESULT xl_optional_DXGIGetDebugInterface1(Args... args) {\n    struct API {\n        HMODULE module = nullptr;\n        decltype(&DXGIGetDebugInterface1) call = nullptr;\n        API() {\n            wchar_t path[32768]{};\n            UINT length = GetSystemDirectoryW(path, 32768);\n            constexpr wchar_t suffix[] = L\"\\\\dxgi.dll\";\n            if (length && length + sizeof(suffix) / sizeof(wchar_t) < 32768) {\n                for (size_t i = 0; i < sizeof(suffix) / sizeof(wchar_t); ++i) path[length + i] = suffix[i];\n                module = LoadLibraryW(path);\n                if (module) call = reinterpret_cast<decltype(call)>(GetProcAddress(module, \"DXGIGetDebugInterface1\"));\n            }\n        }\n        ~API() { if (module) FreeLibrary(module); }\n    };\n    static const API api;\n    return api.call ? api.call(args...) : E_NOINTERFACE;\n}\n"
+        },
+        {
+          "before": "HRESULT getAnalysis = DXGIGetDebugInterface1(",
+          "after": "HRESULT getAnalysis = xl_optional_DXGIGetDebugInterface1("
+        },
+        {
+          "before": "        , fDevice(backendContext.fDevice)\n",
+          "after": "        , fShaderCompiler(backendContext.fShaderCompiler)\n        , fDevice(backendContext.fDevice)\n"
+        }
+      ]
+    },
+    {
+      "file": "src/gpu/ganesh/d3d/GrD3DRootSignature.cpp",
+      "replacements": [
+        {
+          "before": "using namespace skia_private;\n",
+          "after": "using namespace skia_private;\n\n// XLWebEngineUI: runtime-only optional Windows API; no hard DLL import.\ntemplate<class... Args>\nstatic HRESULT xl_optional_D3D12SerializeRootSignature(Args... args) {\n    struct API {\n        HMODULE module = nullptr;\n        decltype(&D3D12SerializeRootSignature) call = nullptr;\n        API() {\n            wchar_t path[32768]{};\n            UINT length = GetSystemDirectoryW(path, 32768);\n            constexpr wchar_t suffix[] = L\"\\\\d3d12.dll\";\n            if (length && length + sizeof(suffix) / sizeof(wchar_t) < 32768) {\n                for (size_t i = 0; i < sizeof(suffix) / sizeof(wchar_t); ++i) path[length + i] = suffix[i];\n                module = LoadLibraryW(path);\n                if (module) call = reinterpret_cast<decltype(call)>(GetProcAddress(module, \"D3D12SerializeRootSignature\"));\n            }\n        }\n        ~API() { if (module) FreeLibrary(module); }\n    };\n    static const API api;\n    return api.call ? api.call(args...) : E_NOINTERFACE;\n}\n"
+        },
+        {
+          "before": "HRESULT hr = D3D12SerializeRootSignature(",
+          "after": "HRESULT hr = xl_optional_D3D12SerializeRootSignature("
+        }
+      ]
+    },
+    {
+      "file": "include/gpu/ganesh/d3d/GrD3DBackendContext.h",
+      "replacements": [
+        {
+          "before": "#include \"include/gpu/ganesh/GrTypes.h\"",
+          "after": "#include \"include/gpu/ganesh/GrTypes.h\"\n#include <d3dcompiler.h>"
+        },
+        {
+          "before": "    gr_cp<IDXGIAdapter1> fAdapter;",
+          "after": "    // XLWebEngineUI: compiler lifetime belongs to the backend context owner.\n    decltype(&D3DCompile) fShaderCompiler = nullptr;\n    gr_cp<IDXGIAdapter1> fAdapter;"
+        }
+      ]
+    },
+    {
+      "file": "src/gpu/ganesh/d3d/GrD3DGpu.h",
+      "replacements": [
+        {
+          "before": "#include \"include/gpu/ganesh/d3d/GrD3DBackendSurface.h\"",
+          "after": "#include \"include/gpu/ganesh/d3d/GrD3DBackendSurface.h\"\n#include <d3dcompiler.h>"
+        },
+        {
+          "before": "    ID3D12Device* device() const { return fDevice.get(); }",
+          "after": "    decltype(&D3DCompile) shaderCompiler() const { return fShaderCompiler; }\n    ID3D12Device* device() const { return fDevice.get(); }"
+        },
+        {
+          "before": "    gr_cp<ID3D12Device> fDevice;",
+          "after": "    decltype(&D3DCompile) fShaderCompiler;\n    gr_cp<ID3D12Device> fDevice;"
+        }
+      ]
+    }
+  ]
+}

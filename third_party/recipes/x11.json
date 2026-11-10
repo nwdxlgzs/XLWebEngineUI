@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "components": {
+    "xorgproto": {"depends": [], "options": ["--disable-specs"]},
+    "xcb-proto": {"depends": [], "options": []},
+    "xtrans": {"depends": [], "options": ["--disable-docs"]},
+    "libXau": {"depends": ["xorgproto"], "options": []},
+    "libXdmcp": {"depends": ["xorgproto"], "options": ["--without-libbsd"]},
+    "libxcb": {"depends": ["xcb-proto", "libXau", "libXdmcp"], "options": ["--disable-doxygen-doc"]},
+    "libX11": {"depends": ["xorgproto", "xtrans", "libxcb"], "options": ["--disable-specs", "--disable-devel-docs", "--without-xmlto", "--without-fop", "--disable-xf86bigfont"]},
+    "libXext": {"depends": ["libX11"], "options": ["--disable-specs"]},
+    "libXrender": {"depends": ["libX11"], "options": []},
+    "libXfixes": {"depends": ["libX11"], "options": []},
+    "libXcursor": {"depends": ["libXrender", "libXfixes"], "options": []},
+    "libXrandr": {"depends": ["libXext", "libXrender"], "options": []},
+    "libXi": {"depends": ["libXext", "libXfixes"], "options": ["--disable-specs"]},
+    "libXScrnSaver": {"depends": ["libXext"], "options": []}
+  }
+}

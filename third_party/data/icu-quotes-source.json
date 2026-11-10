@@ -1,0 +1,7 @@
+{
+  "icu_commit": "ddc6b66926bfac6036144ca9902992a0d6d50af9",
+  "path": "source/data/in/icudt79l.dat",
+  "sha256": "208a8392975e81a351fd9e3759f7a2c7a5659c97ef258c7a7435e2d9c31a61ce",
+  "license": "Unicode-3.0",
+  "selection": "ULocaleData quotation and alternate quotation delimiters for all available locales plus root"
+}

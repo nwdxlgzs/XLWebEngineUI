@@ -1,0 +1,24 @@
+* text=auto
+*.md text eol=lf
+*.MD text eol=lf
+*.py text eol=lf
+*.sh text eol=lf
+*.ps1 text eol=lf
+*.cmake text eol=lf
+*.cpp text eol=lf
+*.c text eol=lf
+*.in text eol=lf
+*.map text eol=lf
+*.h text eol=lf
+*.hpp text eol=lf
+*.json text eol=lf
+CMakeLists.txt text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+assets/webtest/OFL.txt -text -whitespace
+# Preserve upstream bytes used by the Chromium profile's locked SHA256 values.
+third_party/icu-chromium/** -text -whitespace
+*.ttf binary
+# Owner-maintained plan and original user fixtures keep their exact bytes.
+RAW-PLAN.MD -text -whitespace
+tests/user-dev-tests/** -text -whitespace

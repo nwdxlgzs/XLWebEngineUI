@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "upstream": "Lexbor 7e278c0188489bfce6b71ced0cc900cbb31e6244",
+  "file": "source/lexbor/selectors/selectors.c",
+  "description": "Resume deferred relational candidate search within the failed compound in its traversal direction; never bypass a failed rightmost subject. Preserves nesting specificity and DOM query subjects.",
+  "replacements": [
+    {
+      "before": "static lxb_selectors_entry_t *\nlxb_selectors_state_find(lxb_selectors_t *selectors,\n                         lxb_selectors_entry_t *entry);\n",
+      "after": "static lxb_selectors_entry_t *\nlxb_selectors_state_find(lxb_selectors_t *selectors,\n                         lxb_selectors_entry_t *entry);\n\nstatic lxb_selectors_entry_t *\nlxb_selectors_state_find_forward(lxb_selectors_t *selectors,\n                                 lxb_selectors_entry_t *entry);\n"
+    },
+    {
+      "before": "lxb_inline void\nlxb_selectors_switch_to_not_found(lxb_selectors_t *selectors,\n                                  lxb_selectors_nested_t *current)\n{\n    if (current->forward) {",
+      "after": "/* XLWebEngineUI: deferred functional selectors return after a candidate was\n * found. A failed candidate must resume the same compound's relational search,\n * not discard its remaining ancestors/siblings/descendants. */\nlxb_inline bool\nlxb_selectors_retry_compound(lxb_selectors_t *selectors,\n                              lxb_selectors_nested_t *current)\n{\n    lxb_selectors_entry_t *first = current->entry;\n    lxb_dom_node_t *node = first->node;\n    while (first->combinator == LXB_CSS_SELECTOR_COMBINATOR_CLOSE\n           && (current->forward ? first->prev : first->next) != NULL)\n    {\n        first = current->forward ? first->prev : first->next;\n    }\n    if (first->combinator != LXB_CSS_SELECTOR_COMBINATOR_DESCENDANT\n        && first->combinator != LXB_CSS_SELECTOR_COMBINATOR_FOLLOWING\n        && !(current->forward\n             && first->combinator == LXB_CSS_SELECTOR_COMBINATOR_CHILD))\n    {\n        return false;\n    }\n    first->node = node;\n    current->entry = first;\n    selectors->state = current->forward ? lxb_selectors_state_find_forward\n                                       : lxb_selectors_state_find;\n    return true;\n}\n\nlxb_inline void\nlxb_selectors_switch_to_not_found(lxb_selectors_t *selectors,\n                                  lxb_selectors_nested_t *current)\n{\n    if (lxb_selectors_retry_compound(selectors, current)) {\n        return;\n    }\n    if (current->forward) {"
+    },
+    {
+      "before": "    current = selectors->current;\n    entry = current->entry;\n\ntry_next:\n",
+      "after": "    current = selectors->current;\n    entry = current->entry;\n    if (entry->combinator == LXB_CSS_SELECTOR_COMBINATOR_CLOSE\n        && lxb_selectors_retry_compound(selectors, current))\n    {\n        return current->entry;\n    }\n\ntry_next:\n"
+    },
+    {
+      "before": "lxb_selectors_state_not_found_forward(lxb_selectors_t *selectors,\n                                      lxb_selectors_entry_t *entry)\n{\ntry_next:\n",
+      "after": "lxb_selectors_state_not_found_forward(lxb_selectors_t *selectors,\n                                      lxb_selectors_entry_t *entry)\n{\n    if (entry->combinator == LXB_CSS_SELECTOR_COMBINATOR_CLOSE\n        && lxb_selectors_retry_compound(selectors, selectors->current))\n    {\n        return selectors->current->entry;\n    }\ntry_next:\n"
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "schema": 1,
+  "upstream": "ce2a022290e75255f2f5408138123dfacc7ddfd2",
+  "description": "Reuse private static graphics implementations; keep missing modern Windows DLLs/APIs runtime-probed; no vendor source is edited directly.",
+  "files": [
+    {
+      "file": "third_party/CMakeLists.txt",
+      "replacements": [
+        {
+          "before": "if (DAWN_ENABLE_SWIFTSHADER AND NOT TARGET vk_swiftshader)",
+          "after": "if (DAWN_ENABLE_SWIFTSHADER AND NOT TARGET vk_swiftshader AND NOT XL_DAWN_STATIC_SWIFTSHADER)"
+        },
+        {
+          "before": "if (DAWN_USE_BUILT_DXC)\n    AddSubdirectoryDXC()",
+          "after": "if (DAWN_USE_BUILT_DXC AND NOT XL_DAWN_STATIC_DXC)\n    AddSubdirectoryDXC()"
+        }
+      ]
+    },
+    {
+      "file": "src/dawn/native/CMakeLists.txt",
+      "replacements": [
+        {
+          "before": "if (DAWN_USE_BUILT_DXC)\n    target_link_libraries(dawn_native PRIVATE dxcompiler)",
+          "after": "if (DAWN_USE_BUILT_DXC AND NOT XL_DAWN_STATIC_DXC)\n    target_link_libraries(dawn_native PRIVATE dxcompiler)"
+        },
+        {
+          "before": "    find_package(X11 REQUIRED)",
+          "after": "    if(XL_DAWN_X11_INCLUDE_DIRS)\n        set(X11_INCLUDE_DIR \"${XL_DAWN_X11_INCLUDE_DIRS}\")\n    else()\n        find_package(X11 REQUIRED)\n    endif()"
+        }
+      ]
+    },
+    {
+      "file": "src/dawn/native/d3d12/PlatformFunctionsD3D12.cpp",
+      "replacements": [
+        {
+          "before": "namespace dawn::native::d3d12 {",
+          "after": "extern \"C\" HRESULT WINAPI xl_dxcompiler_DxcCreateInstance(REFCLSID, REFIID, void**);\n\nnamespace dawn::native::d3d12 {"
+        },
+        {
+          "before": "    // TODO(dawn:766)\n    // Statically linked with dxcompiler.lib in UWP\n    // currently linked with dxcompiler.lib making CoreApp unable to activate\n    // LoadDXCompiler will fail in UWP, but Initialize() can still be\n    // successfully executed.\n\n    if (mDXCompilerLib.Valid()) {\n        // The library is already loaded, no need to load it again.\n        return {};\n    }\n\n    DynamicLib dxCompilerLib;\n    std::string error;\n    if (!dxCompilerLib.Open(\"dxcompiler.dll\", searchPaths, &error)) {\n        return DAWN_MAKE_UNRECOVERABLE_ERROR(std::move(error));\n    }\n\n    if (!dxCompilerLib.GetProc(&dxcCreateInstance, \"DxcCreateInstance\", &error)) {\n        return DAWN_MAKE_UNRECOVERABLE_ERROR(std::move(error));\n    }\n\n    mDXCompilerLib = std::move(dxCompilerLib);\n    return {};",
+          "after": "    // Private static entry point initializes DXC lazily and safely on first call.\n    // Never load dxcompiler.dll or dxil.dll; the final SDK already owns this closure.\n    dxcCreateInstance = &xl_dxcompiler_DxcCreateInstance;\n    return {};"
+        }
+      ]
+    },
+    {
+      "file": "src/dawn/native/vulkan/BackendVk.cpp",
+      "replacements": [
+        {
+          "before": "namespace dawn::native::vulkan {",
+          "after": "extern \"C\" VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL\nxl_swiftshader_vkGetInstanceProcAddr(VkInstance, const char*);\n\nnamespace dawn::native::vulkan {"
+        },
+        {
+          "before": "            DAWN_TRY(LoadVulkan(kSwiftshaderLibName));",
+          "after": "            mFunctions.GetInstanceProcAddr = &xl_swiftshader_vkGetInstanceProcAddr;"
+        },
+        {
+          "before": "        case ICD::None: {\n            DAWN_TRY(LoadVulkan(kVulkanLibName));",
+          "after": "        case ICD::None: {\n#if DAWN_PLATFORM_IS(WINDOWS)\n            // XL: Vulkan is a system ICD loader. A bare name with\n            // LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR is invalid on Windows.\n            std::string error;\n            if (!mVulkanLib.OpenSystemLibrary(L\"vulkan-1.dll\", &error)) {\n                return DAWN_UNRECOVERABLE_ERROR(\"Couldn't load system Vulkan: %s\", error.c_str());\n            }\n#else\n            DAWN_TRY(LoadVulkan(kVulkanLibName));\n#endif"
+        }
+      ]
+    },
+    {
+      "file": "src/dawn/native/vulkan/VulkanFunctions.cpp",
+      "replacements": [
+        {
+          "before": "    if (!vulkanLib.GetProc(&GetInstanceProcAddr, \"vkGetInstanceProcAddr\")) {",
+          "after": "    if (!GetInstanceProcAddr &&\n        !vulkanLib.GetProc(&GetInstanceProcAddr, \"vkGetInstanceProcAddr\")) {"
+        }
+      ]
+    },
+    {
+      "file": "src/dawn/common/DynamicLib.cpp",
+      "replacements": [
+        {
+          "before": "    mHandle = ::LoadLibraryExW(filename.data(), nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);",
+          "after": "    mHandle = ::LoadLibraryExW(filename.data(), nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);\n    if (!mHandle && GetLastError() == ERROR_INVALID_PARAMETER &&\n        filename.find_first_of(L\"/\\\\:\") == std::wstring_view::npos) {\n        // Win7 without KB2533623: resolve system libraries to an absolute path.\n        wchar_t directory[32768];\n        const UINT length = GetSystemDirectoryW(directory, 32768);\n        if (length && length < 32768) {\n            const std::wstring absolute = std::wstring(directory, length) + L\"\\\\\" +\n                                          std::wstring(filename);\n            mHandle = ::LoadLibraryExW(absolute.c_str(), nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);\n        }\n    }"
+        },
+        {
+          "before": "    mHandle = LoadLibraryExA(filename.c_str(), nullptr, loadLibraryFlags);",
+          "after": "    mHandle = LoadLibraryExA(filename.c_str(), nullptr, loadLibraryFlags);\n    if (!mHandle && GetLastError() == ERROR_INVALID_PARAMETER &&\n        ((filename.size() >= 3 && filename[1] == ':' &&\n          (filename[2] == '\\\\' || filename[2] == '/')) ||\n         filename.starts_with(\"\\\\\\\\\"))) {\n        // Legacy fallback is restricted to absolute application/module paths.\n        mHandle = LoadLibraryExA(filename.c_str(), nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);\n    }"
+        }
+      ]
+    },
+    {
+      "file": "third_party/CopyWindowsSDKDLL.cmake",
+      "replacements": [
+        {
+          "before": "    message(STATUS \"Display environment variables:\")\n    execute_process(COMMAND ${CMAKE_COMMAND} -E environment COMMAND_ECHO STDOUT)",
+          "after": "    # XL: do not emit unrelated host environment values into dependency logs."
+        }
+      ]
+    },
+    {
+      "file": "generator/dawn_version_generator.py",
+      "replacements": [
+        {
+          "before": "    return get_git_hash(os.path.abspath(args.dawn_dir))",
+          "after": "    # XL: an archive must not discover the enclosing application Git checkout.\n    # This replacement is pinned to this Dawn source lock and patch revision.\n    return \"ce2a022290e75255f2f5408138123dfacc7ddfd2\""
+        }
+      ]
+    },
+    {
+      "file": "src/dawn/native/d3d/d3d_platform.h",
+      "replacements": [
+        {
+          "before": "#include <wrl.h>",
+          "after": "// XL: COM ownership only; full WRL drags in unrelated WinRT-only event APIs.\n#include <wrl/client.h>"
+        },
+        {
+          "before": "#include <DXProgrammableCapture.h>",
+          "after": "#pragma push_macro(\"NTDDI_VERSION\")\n#undef NTDDI_VERSION\n#define NTDDI_VERSION NTDDI_WINBLUE\n#include <DXProgrammableCapture.h>\n#pragma pop_macro(\"NTDDI_VERSION\")"
+        }
+      ]
+    },
+    {
+      "file": "CMakeLists.txt",
+      "replacements": [
+        {
+          "before": "include(DawnCompilerChecks)\ninclude(DawnCompilerExtraFlags)\ninclude(DawnCompilerPlatformFlags)\ninclude(DawnCompilerWarningFlags)",
+          "after": "# XL: warning/feature probes don't call X11. Avoid linking the entire private\n# platform closure for every trivial compiler-flag test, particularly across WSL 9p.\nset(_xl_saved_required_libraries \"${CMAKE_REQUIRED_LIBRARIES}\")\nset(CMAKE_REQUIRED_LIBRARIES \"\")\ninclude(DawnCompilerChecks)\ninclude(DawnCompilerExtraFlags)\ninclude(DawnCompilerPlatformFlags)\ninclude(DawnCompilerWarningFlags)\nset(CMAKE_REQUIRED_LIBRARIES \"${_xl_saved_required_libraries}\")"
+        }
+      ]
+    },
+    {
+      "file": "generator/dawn_json_generator.py",
+      "replacements": [
+        {
+          "before": "                        name = member.name.get().removesuffix(' info')",
+          "after": "                        name = member.name.get()\n                        name = name[:-5] if name.endswith(' info') else name"
+        },
+        {
+          "before": "                name = member.name.get().removesuffix(' info')",
+          "after": "                name = member.name.get()\n                name = name[:-5] if name.endswith(' info') else name"
+        }
+      ]
+    },
+    {
+      "file": "generator/templates/dawn/cpp_macros.tmpl",
+      "replacements": [
+        {
+          "before": "{%- set element_type = decorate(raw_type, typ).removesuffix(\" *\") -%}",
+          "after": "{%- set decorated_type = decorate(raw_type, typ) -%}\n            {%- set element_type = decorated_type[:-2] if decorated_type.endswith(\" *\") else decorated_type -%}"
+        }
+      ]
+    },
+    {
+      "file": "src/dawn/native/d3d/PlatformFunctions.cpp",
+      "replacements": [
+        {
+          "before": "namespace dawn::native::d3d {",
+          "after": "namespace dawn::native::d3d {\n\n// XL: this comparison is an optional fence-wrapper reuse optimization.\n// Missing APIs keep the real OpenSharedFence/OpenSharedHandle path available.\nbool CompareObjectHandlesIfAvailable(HANDLE first, HANDLE second) {\n    if (first == second) return true;\n    using Compare = BOOL(WINAPI*)(HANDLE, HANDLE);\n    static const Compare compare = [] {\n        HMODULE module = GetModuleHandleW(L\"kernelbase.dll\");\n        if (!module) module = GetModuleHandleW(L\"kernel32.dll\");\n        return module ? reinterpret_cast<Compare>(GetProcAddress(module, \"CompareObjectHandles\"))\n                      : nullptr;\n    }();\n    return compare && compare(first, second);\n}"
+        }
+      ]
+    },
+    {
+      "file": "src/dawn/native/d3d11/SharedFenceD3D11.cpp",
+      "replacements": [
+        {
+          "before": "namespace dawn::native::d3d11 {",
+          "after": "namespace dawn::native::d3d {\nbool CompareObjectHandlesIfAvailable(HANDLE first, HANDLE second);\n}\n\nnamespace dawn::native::d3d11 {"
+        },
+        {
+          "before": "::CompareObjectHandles(",
+          "after": "d3d::CompareObjectHandlesIfAvailable("
+        }
+      ]
+    },
+    {
+      "file": "src/dawn/native/d3d12/SharedFenceD3D12.cpp",
+      "replacements": [
+        {
+          "before": "namespace dawn::native::d3d12 {",
+          "after": "namespace dawn::native::d3d {\nbool CompareObjectHandlesIfAvailable(HANDLE first, HANDLE second);\n}\n\nnamespace dawn::native::d3d12 {"
+        },
+        {
+          "before": "::CompareObjectHandles(",
+          "after": "d3d::CompareObjectHandlesIfAvailable("
+        }
+      ]
+    }
+  ]
+}

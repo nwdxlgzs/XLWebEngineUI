@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.20)
+project(XLPrivateSDL LANGUAGES C CXX)
+if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/generated/source/CMakeLists.txt")
+  message(FATAL_ERROR "Prepare the locked private SDL source overlay first")
+endif()
+add_subdirectory("${CMAKE_CURRENT_BINARY_DIR}/generated/source" sdl)

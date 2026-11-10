@@ -1,0 +1,230 @@
+{
+  "schema": 1,
+  "checked_on": "2026-11-04",
+  "required_by": "Dawn/Tint ce2a022290e75255f2f5408138123dfacc7ddfd2 from locked Skia DEPS; additional source records are added only after upstream verification",
+  "dependencies": {
+    "dawn": {
+      "name": "dawn",
+      "repository": "https://github.com/google/dawn",
+      "commit": "ce2a022290e75255f2f5408138123dfacc7ddfd2",
+      "revision": "ce2a022290e75255f2f5408138123dfacc7ddfd2",
+      "checked_on": "2026-11-04",
+      "archive": "dawn-ce2a022290e7.tar.gz",
+      "archive_root": "dawn-ce2a022290e75255f2f5408138123dfacc7ddfd2",
+      "bytes": 27603547,
+      "sha256": "5b9b1d58fa40f31192ceed6d9cee28abea1e63335b27ab2e25cd9f72251e58ce",
+      "urls": [
+        "https://codeload.github.com/google/dawn/tar.gz/ce2a022290e75255f2f5408138123dfacc7ddfd2"
+      ],
+      "hash_authority": "SHA256 and byte count of official Google Dawn archive at exact locked Skia DEPS commit",
+      "license": "BSD-3-Clause",
+      "selected_license": "BSD-3-Clause",
+      "license_scope": "Dawn/Tint core; bundled runtime helper notices are retained separately and external source dependencies require their own lock records",
+      "license_files": [
+        "LICENSE",
+        "third_party/renderdoc/LICENSE.md",
+        "third_party/dragonbox/LICENSE-Apache2-LLVM",
+        "third_party/dragonbox/LICENSE-Boost",
+        "third_party/fast_float/LICENSE",
+        "third_party/fp16/LICENSE"
+      ],
+      "patches": [
+        "third_party/patches/dawn-private-static-graphics.json"
+      ],
+      "extract_prefixes": [
+        ".bazelignore",
+        ".bazelrc",
+        ".bazelversion",
+        ".clang-format",
+        ".clang-format-ignore",
+        ".clang-tidy",
+        ".git-blame-ignore-revs",
+        ".gitattributes",
+        ".github",
+        ".gitignore",
+        ".gitmodules",
+        ".gn",
+        ".style.yapf",
+        ".vscode",
+        "AUTHORS",
+        "BUILD.bazel",
+        "BUILD.gn",
+        "CMakeLists.txt",
+        "CMakeSettings.json",
+        "CODE_OF_CONDUCT.md",
+        "CONTRIBUTING.md",
+        "CPPLINT.cfg",
+        "DEPS",
+        "DIR_METADATA",
+        "LICENSE",
+        "MODULE.bazel",
+        "OWNERS",
+        "PRESUBMIT.py",
+        "PRESUBMIT_test.py",
+        "README.chromium",
+        "README.md",
+        "WATCHLISTS",
+        "WORKSPACE.bazel",
+        "agents",
+        "build",
+        "build_overrides",
+        "buildtools",
+        "codereview.settings",
+        "docs",
+        "generator",
+        "go.mod",
+        "go.sum",
+        "go_presubmit_support.py",
+        "include",
+        "infra",
+        "scripts",
+        "src",
+        "testing",
+        "third_party",
+        "tools",
+        "unsafe_buffers_paths.txt",
+        "vpython.toml",
+        "vpython.toml.uv.lock"
+      ],
+      "extraction_scope": "Complete runtime sources, generators, headers, build scripts and notices; exclude upstream shader test corpus and external CTS, neither used by the runtime build."
+    },
+    "jinja2": {
+      "name": "jinja2",
+      "repository": "https://github.com/pallets/jinja/",
+      "revision": "3.1.6",
+      "version": "3.1.6",
+      "checked_on": "2026-11-04",
+      "archive": "jinja2-3.1.6.tar.gz",
+      "archive_root": "jinja2-3.1.6",
+      "bytes": 245115,
+      "sha256": "0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d",
+      "urls": [
+        "https://files.pythonhosted.org/packages/df/bf/f7da0350254c0ed7c72f3e33cef02e048281fec7ecec5f032d4aac52226b/jinja2-3.1.6.tar.gz"
+      ],
+      "hash_authority": "Official PyPI current stable sdist metadata SHA256 and byte count, checked 2026-11-04",
+      "license": "BSD-3-Clause",
+      "selected_license": "BSD-3-Clause",
+      "license_files": [
+        "LICENSE.txt"
+      ],
+      "source_role": "build-only code generator; pure Python path, no host site-package fallback",
+      "selection": "Current stable upstream package replaces Chromium vendored build-only version; generator compatibility must pass before claiming usable"
+    },
+    "markupsafe": {
+      "name": "markupsafe",
+      "repository": "https://github.com/pallets/markupsafe/",
+      "revision": "3.0.4",
+      "version": "3.0.4",
+      "checked_on": "2026-11-04",
+      "archive": "markupsafe-3.0.4.tar.gz",
+      "archive_root": "markupsafe-3.0.4",
+      "bytes": 153777,
+      "sha256": "2e9ad7dd851bf45fab9f75cbff4cb493fee9979e8d8c7c9c3ee119022518edd6",
+      "urls": [
+        "https://files.pythonhosted.org/packages/38/9b/e422a865e1d5d57d0e509b4e0bf1c1a70a7f6382c29a5aa428df994c8bc8/markupsafe-3.0.4.tar.gz"
+      ],
+      "hash_authority": "Official PyPI current stable sdist metadata SHA256 and byte count, checked 2026-11-04",
+      "license": "BSD-3-Clause",
+      "selected_license": "BSD-3-Clause",
+      "license_files": [
+        "LICENSE.txt"
+      ],
+      "source_role": "build-only code generator; pure Python path, no host site-package fallback",
+      "selection": "Current stable upstream package replaces Chromium vendored build-only version; generator compatibility must pass before claiming usable"
+    },
+    "abseil-cpp": {
+      "name": "abseil-cpp",
+      "repository": "https://github.com/abseil/abseil-cpp",
+      "revision": "cf015c9b764fae69f2140ff2504cb9a4e3de06fc",
+      "commit": "cf015c9b764fae69f2140ff2504cb9a4e3de06fc",
+      "checked_on": "2026-11-04",
+      "archive": "abseil-cpp-cf015c9b764f.tar.gz",
+      "archive_root": "abseil-cpp-cf015c9b764fae69f2140ff2504cb9a4e3de06fc",
+      "bytes": 2492882,
+      "sha256": "689091fabffee3f42828d8eb060ca8c9a303cc52626e6833ec89c4bd4a8f2913",
+      "urls": [
+        "https://codeload.github.com/abseil/abseil-cpp/tar.gz/cf015c9b764fae69f2140ff2504cb9a4e3de06fc"
+      ],
+      "hash_authority": "SHA256 of exact official upstream archive; see source selection and build evidence",
+      "license": "Apache-2.0",
+      "selected_license": "Apache-2.0",
+      "license_files": [
+        "LICENSE"
+      ],
+      "selection": "Official upstream commit cf015c9 replaces Chromium fork 56722f9; standalone CMake API and real Dawn/Tint build/probe must pass. Not asserted byte-equivalent."
+    },
+    "egl-registry": {
+      "name": "egl-registry",
+      "repository": "https://github.com/KhronosGroup/EGL-Registry",
+      "revision": "b055c9b483e70ecd57b3cf7204db21f5a06f9ffe",
+      "commit": "b055c9b483e70ecd57b3cf7204db21f5a06f9ffe",
+      "checked_on": "2026-11-04",
+      "archive": "egl-registry-b055c9b483e7.tar.gz",
+      "archive_root": "EGL-Registry-b055c9b483e70ecd57b3cf7204db21f5a06f9ffe",
+      "bytes": 3366753,
+      "sha256": "bbd72e775630d8e7107878eb818a6c27aca9a57542848c2a70e9e00ba9b3b2e9",
+      "urls": [
+        "https://codeload.github.com/KhronosGroup/EGL-Registry/tar.gz/b055c9b483e70ecd57b3cf7204db21f5a06f9ffe"
+      ],
+      "hash_authority": "SHA256 of exact official upstream archive; see source selection and build evidence",
+      "license": "MIT",
+      "selected_license": "MIT",
+      "license_files": [
+        "api/KHR/khrplatform.h",
+        "api/EGL/eglplatform.h",
+        "api/EGL/egl.h",
+        "api/EGL/eglext.h"
+      ],
+      "extract_prefixes": [
+        "api"
+      ]
+    },
+    "vulkan-utility-libraries": {
+      "name": "vulkan-utility-libraries",
+      "repository": "https://github.com/KhronosGroup/Vulkan-Utility-Libraries",
+      "revision": "271510bc50a1ecc65e62ca07dbf6b8dfe530dfd0",
+      "commit": "271510bc50a1ecc65e62ca07dbf6b8dfe530dfd0",
+      "checked_on": "2026-11-04",
+      "archive": "vulkan-utility-libraries-271510bc50a1.tar.gz",
+      "archive_root": "Vulkan-Utility-Libraries-271510bc50a1ecc65e62ca07dbf6b8dfe530dfd0",
+      "bytes": 1362421,
+      "sha256": "c1ab228847f99e317625e3b97c2733b57fdf83e28108fd13fbe837f8fab9f0b4",
+      "urls": [
+        "https://codeload.github.com/KhronosGroup/Vulkan-Utility-Libraries/tar.gz/271510bc50a1ecc65e62ca07dbf6b8dfe530dfd0"
+      ],
+      "hash_authority": "SHA256 of exact official upstream archive; see source selection and build evidence",
+      "license": "Apache-2.0",
+      "selected_license": "Apache-2.0",
+      "license_files": [
+        "LICENSE.md",
+        "LICENSES/Apache-2.0.txt"
+      ]
+    },
+    "opengl-registry": {
+      "name": "opengl-registry",
+      "repository": "https://github.com/KhronosGroup/OpenGL-Registry",
+      "commit": "6af574a14089ccfee87efe230ebcdd8742859813",
+      "revision": "6af574a14089ccfee87efe230ebcdd8742859813",
+      "checked_on": "2026-11-04",
+      "sha256": "9da807a15c97460079cf9ae258db12dff45803f261bf10b799190c30dc1acb90",
+      "files": [
+        {
+          "path": "xml/gl.xml",
+          "archive": "opengl-registry-6af574a14089-gl.xml",
+          "bytes": 2774722,
+          "sha256": "b9ca2cfa5c676e901c20d34af3407f1687cde0f1336a5ff7a8974d04c7494ad3",
+          "urls": [
+            "https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/6af574a14089ccfee87efe230ebcdd8742859813/xml/gl.xml"
+          ]
+        }
+      ],
+      "license": "Apache-2.0",
+      "selected_license": "Apache-2.0",
+      "license_files": [
+        "xml/gl.xml"
+      ],
+      "source_role": "Build-only OpenGL function generator input at exact Dawn DEPS revision; embedded copyright and permission retained",
+      "hash_authority": "SHA256 of official gl.xml at immutable commit; GitHub contents raw media probe used to obtain identical upstream bytes"
+    }
+  }
+}

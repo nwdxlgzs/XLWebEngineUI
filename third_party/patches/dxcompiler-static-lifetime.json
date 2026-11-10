@@ -1,0 +1,86 @@
+{
+  "schema": 1,
+  "description": "Real static DXC, lazy lifetime, private exports, source archive version isolation, and current clang-cl diagnostics",
+  "files": [
+    {
+      "file": "include/dxc/dxcapi.h",
+      "replacements": [
+        {
+          "before": "#define DXC_API_IMPORT __declspec(dllimport)",
+          "after": "#define DXC_API_IMPORT /* XLWebEngineUI private static API */"
+        },
+        {
+          "before": "#define DXC_API_IMPORT __attribute__((visibility(\"default\")))",
+          "after": "#define DXC_API_IMPORT /* XLWebEngineUI private static API */"
+        }
+      ]
+    },
+    {
+      "file": "utils/version/gen_version.py",
+      "replacements": [
+        {
+          "before": "    enlistment_root=os.path.dirname(os.path.abspath( __file__ ))\n    output = subprocess.check_output(cmd, cwd=enlistment_root)",
+          "after": "    enlistment_root=os.path.dirname(os.path.abspath( __file__ ))\n    # An archive must never discover XLWebEngineUI's enclosing Git repository.\n    source_root = os.path.dirname(os.path.dirname(enlistment_root))\n    if not os.path.exists(os.path.join(source_root, '.git')):\n        raise subprocess.CalledProcessError(1, cmd)\n    output = subprocess.check_output(cmd, cwd=enlistment_root)"
+        }
+      ]
+    },
+    {
+      "file": "cmake/modules/HandleLLVMOptions.cmake",
+      "replacements": [
+        {
+          "before": "    if (CLANG_CL)\n      append(\"-Wall -W -Wno-unused-parameter -Wwrite-strings -Wimplicit-fallthrough\" CMAKE_C_FLAGS CMAKE_CXX_FLAGS)",
+          "after": "    if (CLANG_CL)\n      # clang-cl -Wall means /Wall; pass GNU -Wall explicitly.\n      append(\"/clang:-Wall -W -Wno-unused-parameter -Wwrite-strings -Wimplicit-fallthrough\" CMAKE_C_FLAGS CMAKE_CXX_FLAGS)"
+        }
+      ]
+    },
+    {
+      "file": "tools/clang/tools/dxcompiler/CMakeLists.txt",
+      "replacements": [
+        {
+          "before": "add_clang_library(dxcompiler SHARED ${SOURCES})",
+          "after": "add_clang_library(dxcompiler STATIC ${SOURCES})\n# Static LLVM targets expose some dependencies only to their final consumer.\n# Build these real implementations as part of our private closure as well.\nllvm_map_components_to_libnames(xl_dxc_components ${LLVM_LINK_COMPONENTS})\nadd_dependencies(dxcompiler ${xl_dxc_components})\n# Enumerate only the static runtime link graph, excluding host tools such as TableGen.\nfunction(xl_dxc_collect target)\n  get_property(visited GLOBAL PROPERTY XL_DXC_VISITED)\n  if(\"${target}\" IN_LIST visited OR NOT TARGET \"${target}\")\n    return()\n  endif()\n  set_property(GLOBAL APPEND PROPERTY XL_DXC_VISITED \"${target}\")\n  get_target_property(kind \"${target}\" TYPE)\n  if(kind STREQUAL \"STATIC_LIBRARY\")\n    set_property(GLOBAL APPEND PROPERTY XL_DXC_RUNTIME_TARGETS \"${target}\")\n    set_property(GLOBAL APPEND PROPERTY XL_DXC_RUNTIME_FILES \"$<TARGET_FILE:${target}>\")\n  endif()\n  foreach(property LINK_LIBRARIES INTERFACE_LINK_LIBRARIES)\n    get_target_property(entries \"${target}\" \"${property}\")\n    foreach(entry ${entries})\n      string(REGEX REPLACE \"^\\\\$<LINK_ONLY:([^>]+)>$\" \"\\\\1\" entry \"${entry}\")\n      if(TARGET \"${entry}\")\n        xl_dxc_collect(\"${entry}\")\n      endif()\n    endforeach()\n  endforeach()\nendfunction()\nfunction(xl_dxc_finalize_closure)\n  xl_dxc_collect(dxcompiler)\n  get_property(files GLOBAL PROPERTY XL_DXC_RUNTIME_FILES)\n  get_property(targets GLOBAL PROPERTY XL_DXC_RUNTIME_TARGETS)\n  file(GENERATE OUTPUT \"${CMAKE_BINARY_DIR}/xl-runtime-libraries.txt\" CONTENT \"$<JOIN:${files},\\n>\\n\")\n  add_custom_target(xl_dxc_static DEPENDS ${targets})\nendfunction()\ncmake_language(DEFER DIRECTORY \"${CMAKE_SOURCE_DIR}\" CALL xl_dxc_finalize_closure)\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/clang/tools/dxcompiler/DXCompiler.cpp",
+      "replacements": [
+        {
+          "before": "#if defined(LLVM_ON_UNIX)\nHRESULT __attribute__((constructor)) DllMain() { return InitMaybeFail(); }\n\nvoid __attribute__((destructor)) DllShutdown() {\n  DxcSetThreadMallocToDefault();\n  ::hlsl::options::cleanupHlslOptTable();\n  ::llvm::sys::fs::CleanupPerThreadFileSystem();\n  ::llvm::llvm_shutdown();\n  DxcClearThreadMalloc();\n  DxcCleanupThreadMalloc();\n}\n#else  // LLVM_ON_UNIX\nBOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD Reason, LPVOID reserved) {\n  BOOL result = TRUE;\n  if (Reason == DLL_PROCESS_ATTACH) {\n    EventRegisterMicrosoft_Windows_DXCompiler_API();\n    DxcEtw_DXCompilerInitialization_Start();\n    HRESULT hr = InitMaybeFail();\n    DxcEtw_DXCompilerInitialization_Stop(hr);\n    result = SUCCEEDED(hr) ? TRUE : FALSE;\n  } else if (Reason == DLL_PROCESS_DETACH) {\n    DxcEtw_DXCompilerShutdown_Start();\n    DxcSetThreadMallocToDefault();\n    ::hlsl::options::cleanupHlslOptTable();\n    ::llvm::sys::fs::CleanupPerThreadFileSystem();\n    ::llvm::llvm_shutdown();\n    DxcClearThreadMalloc();\n    DxcCleanupThreadMalloc();\n    DxcEtw_DXCompilerShutdown_Stop(S_OK);\n    EventUnregisterMicrosoft_Windows_DXCompiler_API();\n  }\n\n  return result;\n}\n#endif // LLVM_ON_UNIX\n",
+          "after": "// XLWebEngineUI: static compiler initialization is lazy and thread-safe.\n// No DllMain, ELF constructor, or replacement global allocator in the SDK.\nHRESULT xl_dxc_initialize() {\n  struct Session {\n    HRESULT result;\n    Session() : result(InitMaybeFail()) {}\n    ~Session() {\n      if (FAILED(result)) return;\n      DxcSetThreadMallocToDefault();\n      ::hlsl::options::cleanupHlslOptTable();\n      ::llvm::sys::fs::CleanupPerThreadFileSystem();\n      ::llvm::llvm_shutdown();\n      DxcClearThreadMalloc();\n      DxcCleanupThreadMalloc();\n    }\n  };\n  static Session session;\n  return session.result;\n}\n"
+        }
+      ]
+    },
+    {
+      "file": "tools/clang/tools/dxcompiler/dxcapi.cpp",
+      "replacements": [
+        {
+          "before": "#define DXC_API_IMPORT __declspec(dllexport)",
+          "after": "#define DXC_API_IMPORT /* XLWebEngineUI private static compiler */"
+        },
+        {
+          "before": "#define DXC_API_IMPORT __attribute__((visibility(\"default\")))",
+          "after": "#define DXC_API_IMPORT /* XLWebEngineUI private static compiler */"
+        },
+        {
+          "before": "#include <memory>",
+          "after": "#include <memory>\nHRESULT xl_dxc_initialize();"
+        },
+        {
+          "before": "  if (ppv == nullptr) {\n    return E_POINTER;\n  }\n",
+          "after": "  if (ppv == nullptr) {\n    return E_POINTER;\n  }\n  const HRESULT initialized = xl_dxc_initialize();\n  if (FAILED(initialized)) { *ppv = nullptr; return initialized; }\n",
+          "occurrences": 2
+        }
+      ]
+    },
+    {
+      "file": "CMakeLists.txt",
+      "replacements": [
+        {
+          "before": "  SET(CMAKE_CXX_FLAGS_DEBUG  \"${CMAKE_CXX_FLAGS_DEBUG} /WX\")",
+          "after": "  # XLWebEngineUI: newer Clang diagnostics do not turn upstream warnings into errors.\n  if(LLVM_ENABLE_WERROR)\n    SET(CMAKE_CXX_FLAGS_DEBUG \"${CMAKE_CXX_FLAGS_DEBUG} /WX\")\n  endif()"
+        }
+      ]
+    }
+  ]
+}

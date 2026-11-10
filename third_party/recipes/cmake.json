@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "components": {
+    "sdl3": {"depends": [], "recipe_directory": "third_party/recipes/sdl3", "generator": "prepare.py", "options": {"SDL_SHARED": false, "SDL_STATIC": true, "SDL_TEST_LIBRARY": false, "SDL_TESTS": false, "SDL_EXAMPLES": false, "SDL_INSTALL": true}},
+    "zlib": {"depends": [], "options": {"ZLIB_BUILD_SHARED": false, "ZLIB_BUILD_STATIC": true, "ZLIB_BUILD_TESTING": false}},
+    "brotli": {"depends": [], "options": {"BROTLI_BUILD_TOOLS": false, "BROTLI_DISABLE_TESTS": true}},
+    "zstd": {"depends": [], "subdirectory": "build/cmake", "options": {"ZSTD_BUILD_SHARED": false, "ZSTD_BUILD_STATIC": true, "ZSTD_BUILD_PROGRAMS": false, "ZSTD_BUILD_TESTS": false, "ZSTD_BUILD_DICTBUILDER": false}},
+    "libpng": {"depends": ["zlib"], "options": {"PNG_SHARED": false, "PNG_STATIC": true, "PNG_TESTS": false, "PNG_TOOLS": false, "PNG_EXECUTABLES": false}},
+    "freetype": {"depends": ["zlib", "brotli", "libpng"], "options": {"FT_REQUIRE_ZLIB": true, "FT_REQUIRE_PNG": true, "FT_REQUIRE_BROTLI": true, "FT_DISABLE_BZIP2": true, "FT_DISABLE_HARFBUZZ": true}},
+    "harfbuzz": {"depends": ["freetype"], "options": {"HB_HAVE_FREETYPE": true, "HB_HAVE_ICU": false, "HB_HAVE_GLIB": false, "HB_HAVE_GOBJECT": false, "HB_BUILD_UTILS": false, "HB_BUILD_TESTS": false, "HB_BUILD_SUBSET": true}},
+    "icu": {"depends": [], "recipe_directory": "third_party/recipes/icu", "options": {}},
+    "libjpeg-turbo": {"depends": [], "options": {"ENABLE_SHARED": false, "ENABLE_STATIC": true, "WITH_JAVA": false, "WITH_TURBOJPEG": false}},
+    "libwebp": {"depends": [], "options": {"WEBP_BUILD_ANIM_UTILS": false, "WEBP_BUILD_CWEBP": false, "WEBP_BUILD_DWEBP": false, "WEBP_BUILD_GIF2WEBP": false, "WEBP_BUILD_IMG2WEBP": false, "WEBP_BUILD_VWEBP": false, "WEBP_BUILD_WEBPINFO": false, "WEBP_BUILD_WEBPMUX": false, "WEBP_BUILD_EXTRAS": false}},
+    "ogg": {"depends": [], "options": {"BUILD_TESTING": false, "INSTALL_DOCS": false}},
+    "vorbis": {"depends": ["ogg"], "options": {"BUILD_TESTING": false}},
+    "opus": {"depends": [], "options": {"OPUS_BUILD_TESTING": false, "OPUS_BUILD_PROGRAMS": false}},
+    "libwebm": {"depends": [], "options": {"ENABLE_WEBMTS": false, "ENABLE_WEBMINFO": false, "ENABLE_SAMPLE_PROGRAMS": false, "ENABLE_TESTS": false}},
+    "libvpx": {"depends": [], "recipe_directory": "third_party/recipes/libvpx", "generator": "prepare.py", "options": {}},
+    "lexbor": {"depends": [], "recipe_directory": "third_party/recipes/lexbor", "options": {"LEXBOR_BUILD_TESTS": false, "LEXBOR_BUILD_EXAMPLES": false, "LEXBOR_BUILD_SHARED": false, "LEXBOR_BUILD_STATIC": true}},
+    "quickjs-ng": {"depends": [], "options": {"QJS_BUILD_EXAMPLES": false, "QJS_BUILD_LIBC": false, "QJS_ENABLE_INSTALL": true}}
+  }
+}

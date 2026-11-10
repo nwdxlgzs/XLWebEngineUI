@@ -1,0 +1,181 @@
+{
+  "schema": 2,
+  "cmake-linux-x64": {
+    "name": "CMake Linux host tool",
+    "version": "4.4.5",
+    "revision": "v4.4.5",
+    "archive": "cmake-4.4.5-linux-x86_64.tar.gz",
+    "archive_root": "cmake-4.4.5-linux-x86_64",
+    "bytes": 64865573,
+    "sha256": "ed85135c5a5135b45e50423cb406dea04ca3338da0b8ef3c9ede963559680be0",
+    "urls": [
+      "https://cmake.org/files/v4.4/cmake-4.4.5-linux-x86_64.tar.gz",
+      "https://github.com/Kitware/CMake/releases/download/v4.4.5/cmake-4.4.5-linux-x86_64.tar.gz"
+    ],
+    "license": "BSD-3-Clause",
+    "license_files": ["doc/cmake/LICENSE.rst"],
+    "purpose": "Linux SwiftShader host build only; not distributed in the target SDK",
+    "checked_on": "2026-11-04",
+    "hash_authority": "Official Kitware v4.4.5 release SHA-256 list and GitHub asset digest"
+  },
+  "llvm-windows-x64": {
+    "version": "23.1.4",
+    "archive": "clang+llvm-23.1.4-x86_64-pc-windows-msvc.tar.zst",
+    "bytes": 276626313,
+    "archive_root": "clang+llvm-23.1.4-x86_64-pc-windows-msvc",
+    "sha256": "1a3f2f998e230b5791cc4e2bfe11a1f7c07fe42c96ff44f227c9db0bedfaf091",
+    "urls": [
+      "https://github.com/llvm/llvm-project/releases/download/llvmorg-23.1.4/clang%2Bllvm-23.1.4-x86_64-pc-windows-msvc.tar.zst"
+    ],
+    "license": "Apache-2.0 WITH LLVM-exception",
+    "hash_authority": "https://github.com/llvm/llvm-project/releases/tag/llvmorg-23.1.4"
+  },
+  "llvm-runtimes-source": {
+    "version": "23.1.4",
+    "archive": "llvm-project-23.1.4.src.tar.xz",
+    "bytes": 179272572,
+    "archive_root": "llvm-project-23.1.4.src",
+    "sha256": "819ecf7351f1a66f76b2d701d8942faaf5faeb324cb90c9d5b090de142434bb2",
+    "urls": [
+      "https://github.com/llvm/llvm-project/releases/download/llvmorg-23.1.4/llvm-project-23.1.4.src.tar.xz"
+    ],
+    "license": "Apache-2.0 WITH LLVM-exception",
+    "hash_authority": "https://github.com/llvm/llvm-project/releases/tag/llvmorg-23.1.4",
+    "extract_prefixes": [
+      "cmake",
+      "compiler-rt",
+      "libcxx",
+      "libcxxabi",
+      "libunwind",
+      "runtimes",
+      "llvm/cmake",
+      "llvm/include/llvm/Config",
+      "LICENSE.TXT",
+      "llvm/utils/llvm-lit",
+      "utils/lit",
+      "libc/shared",
+      "libc/src/__support",
+      "libc/hdr",
+      "libc/include",
+      "libc/LICENSE.TXT"
+    ]
+  },
+  "llvm-linux-x64": {
+    "version": "1:23.1.5~++20261028083830+a738f2737189-1~exp1~20261028203946.94",
+    "archive_root": "llvm-23-focal",
+    "license": "Apache-2.0 WITH LLVM-exception",
+    "host_abi": "Ubuntu 20.04 x86_64 glibc build host; target runtimes built separately for musl",
+    "hash_authority": "https://apt.llvm.org/focal/dists/llvm-toolchain-focal-23/main/binary-amd64/Packages.gz",
+    "packages": [
+      {
+        "name": "clang-23",
+        "archive": "clang-23_23.1.5~++20261028083830+a738f2737189-1~exp1~20261028203946.94_amd64.deb",
+        "bytes": 195396,
+        "sha256": "ced83e4c863f198d666591af12a666394dd2b80bd1391e12a28fd1bb9c1554ad",
+        "urls": [
+          "https://apt.llvm.org/focal/pool/main/l/llvm-toolchain-23/clang-23_23.1.5~++20261028083830+a738f2737189-1~exp1~20261028203946.94_amd64.deb"
+        ]
+      },
+      {
+        "name": "libclang-common-23-dev",
+        "archive": "libclang-common-23-dev_23.1.5~++20261028083830+a738f2737189-1~exp1~20261028203946.94_amd64.deb",
+        "bytes": 853016,
+        "sha256": "fe9cb882384f4974462a5aa2053e2813f943627bfd7b5e5932808ea87bff9b9c",
+        "urls": [
+          "https://apt.llvm.org/focal/pool/main/l/llvm-toolchain-23/libclang-common-23-dev_23.1.5~++20261028083830+a738f2737189-1~exp1~20261028203946.94_amd64.deb"
+        ]
+      },
+      {
+        "name": "libclang-cpp23",
+        "archive": "libclang-cpp23_23.1.5~++20261028083830+a738f2737189-1~exp1~20261028203946.94_amd64.deb",
+        "bytes": 13772044,
+        "sha256": "ac80a7b5db0e21b33e5df5e2592c8bea044686a04a64ee123ca82d051d42733d",
+        "urls": [
+          "https://apt.llvm.org/focal/pool/main/l/llvm-toolchain-23/libclang-cpp23_23.1.5~++20261028083830+a738f2737189-1~exp1~20261028203946.94_amd64.deb"
+        ]
+      },
+      {
+        "name": "libllvm23",
+        "archive": "libllvm23_23.1.5~++20261028083830+a738f2737189-1~exp1~20261028203946.94_amd64.deb",
+        "bytes": 30563356,
+        "sha256": "f1fac0932eb846254d8febaa9fbf4e222af22cd32778df166cb8c97412135560",
+        "urls": [
+          "https://apt.llvm.org/focal/pool/main/l/llvm-toolchain-23/libllvm23_23.1.5~++20261028083830+a738f2737189-1~exp1~20261028203946.94_amd64.deb"
+        ]
+      },
+      {
+        "name": "lld-23",
+        "archive": "lld-23_23.1.5~++20261028083830+a738f2737189-1~exp1~20261028203946.94_amd64.deb",
+        "bytes": 1507788,
+        "sha256": "bb5b2d340e1b71da7c7a06f4178e19ce6e005883935f4ec6eecf39c18290e427",
+        "urls": [
+          "https://apt.llvm.org/focal/pool/main/l/llvm-toolchain-23/lld-23_23.1.5~++20261028083830+a738f2737189-1~exp1~20261028203946.94_amd64.deb"
+        ]
+      },
+      {
+        "name": "llvm-23",
+        "archive": "llvm-23_23.1.5~++20261028083830+a738f2737189-1~exp1~20261028203946.94_amd64.deb",
+        "bytes": 19424000,
+        "sha256": "4988c2e23f6c5399f14b7287a9870d9e1f7f20099a91bd9b78662408b4f4adc2",
+        "urls": [
+          "https://apt.llvm.org/focal/pool/main/l/llvm-toolchain-23/llvm-23_23.1.5~++20261028083830+a738f2737189-1~exp1~20261028203946.94_amd64.deb"
+        ]
+      },
+      {
+        "name": "llvm-23-linker-tools",
+        "archive": "llvm-23-linker-tools_23.1.5~++20261028083830+a738f2737189-1~exp1~20261028203946.94_amd64.deb",
+        "bytes": 1272408,
+        "sha256": "6f074cdbcd582931075c4fd71ece41b782a6d7d81e1ed70e57d5b9d99c2c93e1",
+        "urls": [
+          "https://apt.llvm.org/focal/pool/main/l/llvm-toolchain-23/llvm-23-linker-tools_23.1.5~++20261028083830+a738f2737189-1~exp1~20261028203946.94_amd64.deb"
+        ]
+      }
+    ]
+  },
+  "gn-windows-x64": {
+    "version": "b2afae122eeb6ce09c52d63f67dc53fc517dbdc8",
+    "archive": "gn-b2afae122eeb-windows-amd64.zip",
+    "archive_root": "gn-b2afae122eeb-windows-amd64",
+    "bytes": 1120394,
+    "sha256": "7249f55d6f22b55affa68aaf19d2f597c39946299216e12d78eac6cc1469f8a1",
+    "urls": [
+      "https://chrome-infra-packages.appspot.com/dl/gn/gn/windows-amd64/+/git_revision:b2afae122eeb6ce09c52d63f67dc53fc517dbdc8"
+    ],
+    "license": "BSD-3-Clause",
+    "provenance": "Revision pinned by locked upstream Skia bin/fetch-gn; SHA256 of official CIPD package bytes"
+  },
+  "gn-linux-x64": {
+    "version": "b2afae122eeb6ce09c52d63f67dc53fc517dbdc8",
+    "archive": "gn-b2afae122eeb-linux-amd64.zip",
+    "archive_root": "gn-b2afae122eeb-linux-amd64",
+    "bytes": 3230296,
+    "sha256": "6a3bfc53d825bccac5e5b4b7bdcc10ce9396a04a689ac684ec3308ca5c7f3d9c",
+    "urls": [
+      "https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+/git_revision:b2afae122eeb6ce09c52d63f67dc53fc517dbdc8"
+    ],
+    "license": "BSD-3-Clause",
+    "provenance": "Revision pinned by locked upstream Skia bin/fetch-gn; SHA256 of official CIPD package bytes"
+  },
+  "musl-source": {
+    "name": "musl",
+    "version": "1.2.6",
+    "revision": "v1.2.6",
+    "archive": "musl-1.2.6.tar.gz",
+    "archive_root": "musl-1.2.6",
+    "bytes": 1082499,
+    "sha256": "d585fd3b613c66151fc3249e8ed44f77020cb5e6c1e635a616d3f9f82460512a",
+    "urls": [
+      "https://musl.libc.org/releases/musl-1.2.6.tar.gz"
+    ],
+    "license": "MIT",
+    "license_files": [
+      "COPYRIGHT"
+    ],
+    "selected_license": "MIT",
+    "purpose": "target-libc-build",
+    "patches": [],
+    "checked_on": "2026-11-03",
+    "hash_authority": "SHA256 of official musl release archive bytes",
+    "status": "source-prepared; switching target libc from host prerequisite requires separate runtime compatibility validation"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "stage": "data",
+  "description": "Chromium common data redirects against ICU 79.1; applied to disposable data overlay, never upstream sources.",
+  "files": [
+    {
+      "file": "brkitr/ja.txt",
+      "replacements": [
+        {
+          "before": "\"line_cj.brk\"",
+          "after": "\"line.brk\"",
+          "occurrences": 1
+        }
+      ]
+    },
+    {
+      "file": "brkitr/ko.txt",
+      "replacements": [
+        {
+          "before": "\"line_cj.brk\"",
+          "after": "\"line.brk\"",
+          "occurrences": 1
+        }
+      ]
+    },
+    {
+      "file": "brkitr/zh.txt",
+      "replacements": [
+        {
+          "before": "\"line_cj.brk\"",
+          "after": "\"line.brk\"",
+          "occurrences": 2
+        }
+      ]
+    },
+    {
+      "file": "brkitr/zh_Hant.txt",
+      "replacements": [
+        {
+          "before": "\"line_cj.brk\"",
+          "after": "\"line.brk\"",
+          "occurrences": 2
+        }
+      ]
+    },
+    {
+      "file": "brkitr/root.txt",
+      "replacements": [
+        {
+          "before": "line:process(dependency){\"line.brk\"}",
+          "after": "line:process(dependency){\"line_normal.brk\"}",
+          "occurrences": 1
+        },
+        {
+          "before": "    lstm{\n        Mymr{\"Burmese_graphclust_model5_heavy.res\"}\n        Thai{\"Thai_graphclust_model4_heavy.res\"}\n    }\n",
+          "after": "",
+          "occurrences": 1
+        }
+      ]
+    }
+  ]
+}

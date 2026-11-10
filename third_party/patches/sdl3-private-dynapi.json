@@ -1,0 +1,7 @@
+{
+  "schema": 1,
+  "file": "src/dynapi/SDL_dynapi.h",
+  "before": "#define SDL_DYNAMIC_API 1",
+  "after": "// XLWebEngineUI private static SDL: updates are delivered with the SDK.\n#define SDL_DYNAMIC_API 0",
+  "reason": "The SDK must use its pinned private SDL, rather than loading another SDL through a process environment override. Platform capabilities and dynamic system-driver loading remain separate."
+}

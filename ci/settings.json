@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "retention": 3,
+  "release_targets": ["windows-x64", "linux-x64-musl"],
+  "development_targets": ["windows-x64", "linux-x64-glibc-dev"],
+  "module_paths": {
+    "base": ["src/base/", "tests/base/"],
+    "runtime": ["src/runtime/", "tests/runtime_tests.cpp", "examples/runtime/"],
+    "resources": ["src/resources/", "src/text/", "assets/", "tests/resources/", "tests/runtime_resource_tests.cpp"],
+    "graphics": ["src/graphics/", "tests/views/", "tests/graphics/"],
+    "platform": ["src/platform/"],
+    "document": ["src/document/", "tests/document/", "tests/user-dev-tests/", "examples/document/"],
+    "style": ["src/style/"],
+    "layout": ["src/layout/"],
+    "script": ["src/script/"],
+    "accessibility": ["src/accessibility/"],
+    "sdk": ["include/", "tests/sdk/"]
+  },
+  "dependents": {"base": ["runtime", "resources", "graphics", "sdk"], "runtime": ["resources", "sdk"], "resources": ["document", "sdk"], "graphics": ["runtime", "sdk"], "platform": ["graphics", "runtime", "sdk"], "document": ["style", "layout", "script", "accessibility", "runtime", "sdk"], "style": ["layout", "sdk"], "layout": ["graphics", "accessibility", "sdk"], "script": ["document", "sdk"], "accessibility": ["sdk"], "sdk": []},
+  "global_paths": ["CMakeLists.txt", "CMakePresets.json", "include/", "cmake/", "tools/", "ci/", "third_party/", "tests/tools/"]
+}

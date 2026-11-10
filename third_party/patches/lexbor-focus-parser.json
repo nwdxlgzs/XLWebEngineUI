@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "upstream": "Lexbor 7e278c0188489bfce6b71ced0cc900cbb31e6244",
+  "file": "source/lexbor/css/selectors/state.c",
+  "description": "Accept focus-visible/focus-within and before/after syntax, counting class and pseudo-element specificity. XLWebEngineUI supplies dynamic focus and generated-box matching. Preserve author syntax and declaration offsets. Correct additive, component-saturated specificity at all selector-function depths.",
+  "replacements": [
+    {
+      "before": "        case LXB_CSS_SELECTOR_PSEUDO_CLASS_FOCUS_VISIBLE:\n        case LXB_CSS_SELECTOR_PSEUDO_CLASS_FOCUS_WITHIN:\n",
+      "after": "        /* XLWebEngineUI: these two dynamic pseudo-classes are matched by the engine. */\n"
+    },
+    {
+      "before": "    selector->type = LXB_CSS_SELECTOR_TYPE_PSEUDO_CLASS;\n",
+      "after": "    selector->type = LXB_CSS_SELECTOR_TYPE_PSEUDO_CLASS;\n    /* XLWebEngineUI: simple pseudo-classes contribute one class specificity. */\n    lxb_css_selectors_state_specificity_set_b(selectors);\n"
+    },
+    {
+      "before": "        case LXB_CSS_SELECTOR_PSEUDO_ELEMENT_AFTER:\n        case LXB_CSS_SELECTOR_PSEUDO_ELEMENT_BACKDROP:\n        case LXB_CSS_SELECTOR_PSEUDO_ELEMENT_BEFORE:\n",
+      "after": "        /* XLWebEngineUI supplies before/after rendering. Other pseudo-elements remain rejected. */\n        case LXB_CSS_SELECTOR_PSEUDO_ELEMENT_BACKDROP:\n"
+    },
+    {
+      "before": "    selector->type = LXB_CSS_SELECTOR_TYPE_PSEUDO_ELEMENT;\n",
+      "after": "    selector->type = LXB_CSS_SELECTOR_TYPE_PSEUDO_ELEMENT;\n    lxb_css_selectors_state_specificity_set_c(selectors);\n"
+    },
+    {
+      "before": "    selectors = parser->selectors;\n\n    lxb_css_selectors_state_append(parser, selectors, selector);\n    selector->type = LXB_CSS_SELECTOR_TYPE_PSEUDO_CLASS;",
+      "after": "    selectors = parser->selectors;\n\n    /* XLWebEngineUI: the legacy single-colon before/after aliases still have type specificity. */\n    pseudo = lxb_css_selector_pseudo_element_by_name(lxb_css_syntax_token_ident(token)->data,\n                                                    lxb_css_syntax_token_ident(token)->length);\n    if (pseudo != NULL && (pseudo->id == LXB_CSS_SELECTOR_PSEUDO_ELEMENT_BEFORE\n                          || pseudo->id == LXB_CSS_SELECTOR_PSEUDO_ELEMENT_AFTER))\n    {\n        lxb_css_parser_state_set(parser, lxb_css_selectors_state_compound_pseudo);\n        return lxb_css_selectors_state_pseudo_element(parser, token);\n    }\n\n    lxb_css_selectors_state_append(parser, selectors, selector);\n    selector->type = LXB_CSS_SELECTOR_TYPE_PSEUDO_CLASS;"
+    },
+    {
+      "before": "lxb_inline void\nlxb_css_selectors_state_specificity_set_b(lxb_css_selectors_t *selectors)\n{\n    lxb_css_selector_list_t *last = selectors->list_last;\n\n    if (selectors->parent == NULL) {\n        lxb_css_selector_sp_set_b(last->specificity,\n                                  lxb_css_selector_sp_b(last->specificity) + 1);\n    }\n    else if (last->specificity > LXB_CSS_SELECTOR_SP_B_MAX) {\n        if (selectors->combinator == LXB_CSS_SELECTOR_COMBINATOR_CLOSE) {\n            lxb_css_selector_sp_set_b(last->specificity, 1);\n        }\n    }\n    else {\n        if (selectors->combinator != LXB_CSS_SELECTOR_COMBINATOR_CLOSE) {\n            last->specificity = 0;\n        }\n\n        lxb_css_selector_sp_set_b(last->specificity, 1);\n    }\n}\n",
+      "after": "lxb_inline void\nlxb_css_selectors_state_specificity_set_b(lxb_css_selectors_t *selectors)\n{\n    /* XLWebEngineUI: compound specificity adds at every functional depth. */\n    lxb_css_selector_list_t *last = selectors->list_last;\n    uint32_t count = lxb_css_selector_sp_b(last->specificity);\n    lxb_css_selector_sp_set_b(last->specificity, count < 511 ? count + 1 : 511);\n}\n"
+    },
+    {
+      "before": "lxb_inline void\nlxb_css_selectors_state_specificity_set_c(lxb_css_selectors_t *selectors)\n{\n    lxb_css_selector_list_t *last = selectors->list_last;\n\n    if (selectors->parent == NULL) {\n        lxb_css_selector_sp_set_c(last->specificity,\n                                  lxb_css_selector_sp_c(last->specificity) + 1);\n    }\n    else if (last->specificity > LXB_CSS_SELECTOR_SP_C_MAX) {\n        if (selectors->combinator == LXB_CSS_SELECTOR_COMBINATOR_CLOSE) {\n            lxb_css_selector_sp_set_c(last->specificity, 1);\n        }\n    }\n    else {\n        if (selectors->combinator != LXB_CSS_SELECTOR_COMBINATOR_CLOSE) {\n            last->specificity = 0;\n        }\n\n        lxb_css_selector_sp_set_c(last->specificity, 1);\n    }\n}\n",
+      "after": "lxb_inline void\nlxb_css_selectors_state_specificity_set_c(lxb_css_selectors_t *selectors)\n{\n    /* XLWebEngineUI: compound specificity adds at every functional depth. */\n    lxb_css_selector_list_t *last = selectors->list_last;\n    uint32_t count = lxb_css_selector_sp_c(last->specificity);\n    lxb_css_selector_sp_set_c(last->specificity, count < 511 ? count + 1 : 511);\n}\n"
+    },
+    {
+      "before": "    if (selectors->parent == NULL) {\n        lxb_css_selector_sp_set_a(last->specificity,\n                                  lxb_css_selector_sp_a(last->specificity) + 1);\n    }\n    else if (lxb_css_selector_sp_a(last->specificity) == 0) {\n        if (selectors->combinator != LXB_CSS_SELECTOR_COMBINATOR_CLOSE) {\n            last->specificity = 0;\n        }\n\n        lxb_css_selector_sp_set_a(last->specificity, 1);\n    }",
+      "after": "    /* XLWebEngineUI: IDs add within nested selector functions as well. */\n    uint32_t count = lxb_css_selector_sp_a(last->specificity);\n    lxb_css_selector_sp_set_a(last->specificity, count < 511 ? count + 1 : 511);"
+    },
+    {
+      "before": "        if (last->parent == NULL) {\n            lxb_css_selector_sp_add_a(dst, lxb_css_selector_sp_a(src));\n            lxb_css_selector_sp_add_b(dst, lxb_css_selector_sp_b(src));\n            lxb_css_selector_sp_add_c(dst, lxb_css_selector_sp_c(src));\n        }\n        else if (selectors->combinator == LXB_CSS_SELECTOR_COMBINATOR_CLOSE) {\n            dst |= src;\n        }\n        else if (src > dst) {\n            dst = src;\n        }",
+      "after": "        /* XLWebEngineUI: the maximum argument weight adds to the containing\n         * complex selector; bitwise OR loses repeated class/type components. */\n        uint32_t a = lxb_css_selector_sp_a(dst) + lxb_css_selector_sp_a(src);\n        uint32_t b = lxb_css_selector_sp_b(dst) + lxb_css_selector_sp_b(src);\n        uint32_t c = lxb_css_selector_sp_c(dst) + lxb_css_selector_sp_c(src);\n        lxb_css_selector_sp_set_a(dst, a < 511 ? a : 511);\n        lxb_css_selector_sp_set_b(dst, b < 511 ? b : 511);\n        lxb_css_selector_sp_set_c(dst, c < 511 ? c : 511);"
+    }
+  ]
+}

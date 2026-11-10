@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "required_by": "Skia c40d8c9ce629 DEPS; SPIR-V validation, Ganesh/Graphite Vulkan and Ganesh D3D12",
+  "dependencies": {
+    "expat": {
+      "name": "expat",
+      "repository": "https://github.com/libexpat/libexpat",
+      "commit": "6154446fccefbf3ca644894f598969113b0c7bcd",
+      "revision": "6154446fccefbf3ca644894f598969113b0c7bcd",
+      "checked_on": "2026-11-03",
+      "archive": "libexpat-6154446fccef.tar.gz",
+      "archive_root": "libexpat-6154446fccefbf3ca644894f598969113b0c7bcd",
+      "sha256": "6b2d89827324bcc89eb0708c14fb3826808a0cd1a2b5aab28675332734b24d43",
+      "bytes": 8449561,
+      "urls": [
+        "https://codeload.github.com/libexpat/libexpat/tar.gz/6154446fccefbf3ca644894f598969113b0c7bcd"
+      ],
+      "hash_authority": "SHA256 of official libexpat archive at exact locked Skia DEPS commit",
+      "license": "MIT",
+      "selected_license": "MIT",
+      "license_files": [
+        "expat/COPYING"
+      ]
+    },
+    "spirv-tools": {
+      "name": "spirv-tools",
+      "repository": "https://github.com/KhronosGroup/SPIRV-Tools",
+      "commit": "50d7a763ce05f462ac815e5ff7f05656c32ef48f",
+      "revision": "50d7a763ce05f462ac815e5ff7f05656c32ef48f",
+      "checked_on": "2026-11-03",
+      "archive": "SPIRV-Tools-50d7a763ce05.tar.gz",
+      "archive_root": "SPIRV-Tools-50d7a763ce05f462ac815e5ff7f05656c32ef48f",
+      "sha256": "e95c7a5579aae53b59ce465486ee0d42d9fe20ad04b1c5d49cda91797bb5a832",
+      "bytes": 3594153,
+      "urls": [
+        "https://codeload.github.com/KhronosGroup/SPIRV-Tools/tar.gz/50d7a763ce05f462ac815e5ff7f05656c32ef48f"
+      ],
+      "hash_authority": "SHA256 of official Khronos archive at the exact commit required by locked Skia DEPS",
+      "license": "Apache-2.0",
+      "selected_license": "Apache-2.0",
+      "license_files": [
+        "LICENSE"
+      ]
+    },
+    "spirv-headers": {
+      "name": "spirv-headers",
+      "repository": "https://github.com/KhronosGroup/SPIRV-Headers",
+      "commit": "fef168c54ed2e37c314eb251806aaf9877f38465",
+      "revision": "fef168c54ed2e37c314eb251806aaf9877f38465",
+      "checked_on": "2026-11-03",
+      "archive": "SPIRV-Headers-fef168c54ed2.tar.gz",
+      "archive_root": "SPIRV-Headers-fef168c54ed2e37c314eb251806aaf9877f38465",
+      "sha256": "8492ecada56585ec978260f2fa31c87d9ff0f8a1af47de8c57db69eed16cc2d8",
+      "bytes": 595948,
+      "urls": [
+        "https://codeload.github.com/KhronosGroup/SPIRV-Headers/tar.gz/fef168c54ed2e37c314eb251806aaf9877f38465"
+      ],
+      "hash_authority": "SHA256 of official Khronos archive at the exact commit required by locked Skia DEPS",
+      "license": "MIT",
+      "selected_license": "MIT",
+      "license_scope": "Compiled headers/grammars; the complete LICENSE also retains repository documentation and generator notices.",
+      "license_files": [
+        "LICENSE"
+      ]
+    },
+    "vulkanmemoryallocator": {
+      "name": "vulkanmemoryallocator",
+      "repository": "https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator",
+      "revision": "eb744ea7a2b17040121b4bbb4d6f9e8a77e3cae7",
+      "commit": "eb744ea7a2b17040121b4bbb4d6f9e8a77e3cae7",
+      "checked_on": "2026-11-03",
+      "archive": "VulkanMemoryAllocator-eb744ea7a2b1.tar.gz",
+      "archive_root": "VulkanMemoryAllocator-eb744ea7a2b17040121b4bbb4d6f9e8a77e3cae7",
+      "sha256": "882fcdc62506062c8f7b1e05194ac9d71b7df52ddf10d51d6bd31ce1eb8717a2",
+      "bytes": 1003052,
+      "urls": [
+        "https://codeload.github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/tar.gz/eb744ea7a2b17040121b4bbb4d6f9e8a77e3cae7"
+      ],
+      "license": "MIT",
+      "selected_license": "MIT",
+      "license_files": [
+        "LICENSE.txt"
+      ],
+      "hash_authority": "SHA256 of official repository archive at exact locked Skia DEPS commit"
+    },
+    "d3d12allocator": {
+      "name": "d3d12allocator",
+      "repository": "https://github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator",
+      "revision": "169895d529dfce00390a20e69c2f516066fe7a3b",
+      "commit": "169895d529dfce00390a20e69c2f516066fe7a3b",
+      "checked_on": "2026-11-03",
+      "archive": "D3D12MemoryAllocator-169895d529df.tar.gz",
+      "archive_root": "D3D12MemoryAllocator-169895d529dfce00390a20e69c2f516066fe7a3b",
+      "sha256": "145fd395dc97bd57dab7763f68a97de7ce745eb8d862c1b875b6f9093cff4e19",
+      "bytes": 731463,
+      "urls": [
+        "https://codeload.github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator/tar.gz/169895d529dfce00390a20e69c2f516066fe7a3b"
+      ],
+      "license": "MIT",
+      "selected_license": "MIT",
+      "license_files": [
+        "LICENSE.txt"
+      ],
+      "hash_authority": "SHA256 of official repository archive at exact locked Skia DEPS commit"
+    },
+    "vulkan-headers": {
+      "name": "vulkan-headers",
+      "repository": "https://github.com/KhronosGroup/Vulkan-Headers",
+      "revision": "9fbc2a782ee3f8a4db64e7d991e23da75e893f44",
+      "commit": "9fbc2a782ee3f8a4db64e7d991e23da75e893f44",
+      "checked_on": "2026-11-03",
+      "archive": "Vulkan-Headers-9fbc2a782ee3.tar.gz",
+      "archive_root": "Vulkan-Headers-9fbc2a782ee3f8a4db64e7d991e23da75e893f44",
+      "sha256": "48db7ca4b0d1a089e11098da9ceef8164d1efae6db5faa65fe8f1587f548ac08",
+      "bytes": 3453909,
+      "urls": [
+        "https://codeload.github.com/KhronosGroup/Vulkan-Headers/tar.gz/9fbc2a782ee3f8a4db64e7d991e23da75e893f44"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "selected_license": "MIT OR Apache-2.0",
+      "license_files": [
+        "LICENSE.md"
+      ],
+      "hash_authority": "SHA256 of official repository archive at exact locked Skia DEPS commit"
+    },
+    "spirv-cross": {
+      "name": "spirv-cross",
+      "repository": "https://github.com/KhronosGroup/SPIRV-Cross",
+      "commit": "b8fcf307f1f347089e3c46eb4451d27f32ebc8d3",
+      "revision": "b8fcf307f1f347089e3c46eb4451d27f32ebc8d3",
+      "checked_on": "2026-11-03",
+      "archive": "SPIRV-Cross-b8fcf307f1f3.tar.gz",
+      "archive_root": "SPIRV-Cross-b8fcf307f1f347089e3c46eb4451d27f32ebc8d3",
+      "sha256": "4793754d72c89920321e4cf4576a8edab211d46e69309a827a95ebda4deb8881",
+      "bytes": 1787784,
+      "urls": [
+        "https://codeload.github.com/KhronosGroup/SPIRV-Cross/tar.gz/b8fcf307f1f347089e3c46eb4451d27f32ebc8d3"
+      ],
+      "hash_authority": "SHA256 of official repository archive at exact pinned commit",
+      "license": "Apache-2.0",
+      "selected_license": "Apache-2.0",
+      "license_files": [
+        "LICENSE"
+      ]
+    },
+    "wuffs": {
+      "name": "wuffs",
+      "repository": "https://github.com/google/wuffs-mirror-release-c",
+      "commit": "e3f919ccfe3ef542cfc983a82146070258fb57f8",
+      "revision": "e3f919ccfe3ef542cfc983a82146070258fb57f8",
+      "checked_on": "2026-11-04",
+      "archive": "wuffs-e3f919ccfe3e.tar.gz",
+      "archive_root": "wuffs-mirror-release-c-e3f919ccfe3ef542cfc983a82146070258fb57f8",
+      "sha256": "e849dab1f372f16b782ba7528e7f70281e35425bd2d644c92a36fb95909f98db",
+      "bytes": 329864,
+      "urls": [
+        "https://codeload.github.com/google/wuffs-mirror-release-c/tar.gz/e3f919ccfe3ef542cfc983a82146070258fb57f8"
+      ],
+      "hash_authority": "SHA256 of official Google mirror archive at exact Skia DEPS commit",
+      "license": "Apache-2.0",
+      "selected_license": "Apache-2.0",
+      "license_files": [
+        "LICENSE"
+      ]
+    }
+  }
+}

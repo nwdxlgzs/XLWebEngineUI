@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "target": "dxcompiler",
+  "options": {
+    "DXC_DISABLE_ALLOCATOR_OVERRIDES": true,
+    "HLSL_DISABLE_SOURCE_GENERATION": true,
+    "HLSL_AUTOCRLF": false,
+    "HLSL_ENABLE_DEBUG_ITERATORS": true,
+    "LLVM_INCLUDE_TESTS": false,
+    "HLSL_INCLUDE_TESTS": false,
+    "SPIRV_BUILD_TESTS": false,
+    "ENABLE_SPIRV_CODEGEN": false,
+    "ENABLE_METAL_CODEGEN": false,
+    "LLVM_ENABLE_ZLIB": false,
+    "LLVM_ENABLE_TERMINFO": false,
+    "LLVM_ENABLE_CRASH_OVERRIDES": false,
+    "LLVM_ENABLE_WERROR": false,
+    "LLVM_BUILD_TOOLS": false,
+    "CLANG_BUILD_EXAMPLES": false,
+    "BUILD_SHARED_LIBS": false
+  },
+  "build_target": "xl_dxc_static"
+}

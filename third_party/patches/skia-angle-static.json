@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "stage": "angle",
+  "file": "BUILD.gn",
+  "description": "Expose actual static ANGLE EGL/GLES targets through Skia's standalone GN scaffold; off by default for Skia-only builds.",
+  "replacements": [
+    {
+      "before": "import(\"gn/skia.gni\")\n",
+      "after": "import(\"gn/skia.gni\")\n\n# XLWebEngineUI: private static graphics dependencies.\ndeclare_args() {\n  xl_enable_angle_static = false\n}\nif (xl_enable_angle_static) {\n  static_library(\"xl_angle_static\") {\n    complete_static_lib = true\n    deps = [\n      \"//third_party/externals/angle2:libEGL_static\",\n      \"//third_party/externals/angle2:libGLESv2_static\",\n    ]\n  }\n}\n"
+    }
+  ]
+}

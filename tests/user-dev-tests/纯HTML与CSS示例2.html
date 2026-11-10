@@ -1,0 +1,2363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="现代 Web 特性图鉴 —— 纯 HTML 与 CSS 的展示页">
+<title>现代 Web 特性图鉴 · 2025</title>
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   CSS 分层：reset → tokens → base → layout → components → utilities
+   ══════════════════════════════════════════════════════════════════ */
+@layer reset, tokens, base, layout, components, utilities;
+
+/* ─────────────────────────────────────────────────────────────────
+   RESET
+   ───────────────────────────────────────────────────────────────── */
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :where(html, body, h1, h2, h3, h4, h5, h6, p, ul, ol, dl, dt, dd,
+         figure, blockquote, pre, fieldset) {
+    margin: 0;
+    padding: 0;
+  }
+
+  ul, ol { list-style: none; }
+  fieldset { border: 0; }
+  img, svg, video, canvas { display: block; max-width: 100%; }
+
+  button, input, select, textarea, output { font: inherit; color: inherit; }
+  button { background: none; border: none; cursor: pointer; }
+  a { color: inherit; text-decoration: none; }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-block-start: 68px;
+    interpolate-size: allow-keywords;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: color-mix(in oklch, var(--accent) 55%, transparent);
+    color: var(--text);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   TOKENS
+   ───────────────────────────────────────────────────────────────── */
+@layer tokens {
+
+  /* @property：让自定义属性拥有类型，可被动画插值 */
+  @property --hue {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 262;
+  }
+
+  @property --spin {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+  }
+
+  @property --fill {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 0%;
+  }
+
+  :root {
+    /* 主题模式：默认跟随系统，通过 :has 覆盖 */
+    color-scheme: light dark;
+
+    /* 主色相 —— 用一个数字驱动整套配色 */
+    --hue: 262;
+
+    --accent:   oklch(0.66 0.20 var(--hue));
+    --accent-2: oklch(0.72 0.17 calc(var(--hue) + 55));
+    --accent-3: oklch(0.68 0.15 calc(var(--hue) - 55));
+
+    /* light-dark() 随 color-scheme 自动切换 */
+    --bg:      light-dark(oklch(0.985 0.004 260), oklch(0.135 0.012 262));
+    --bg-2:    light-dark(oklch(0.96  0.006 260), oklch(0.175 0.015 262));
+    --surface: light-dark(oklch(1 0 0),            oklch(0.19  0.017 262));
+    --surface-2: light-dark(oklch(0.97 0.005 260), oklch(0.22  0.018 262));
+    --border:  light-dark(oklch(0.90 0.007 260),  oklch(0.30  0.020 262));
+    --border-2: light-dark(oklch(0.82 0.010 260), oklch(0.38  0.024 262));
+    --text:    light-dark(oklch(0.22 0.020 262),  oklch(0.95  0.006 260));
+    --muted:   light-dark(oklch(0.48 0.020 262),  oklch(0.70  0.018 262));
+    --dim:     light-dark(oklch(0.62 0.015 262),  oklch(0.52  0.020 262));
+
+    --ok:   light-dark(oklch(0.60 0.16 150), oklch(0.72 0.17 150));
+    --warn: light-dark(oklch(0.68 0.16  75), oklch(0.80 0.16  75));
+    --err:  light-dark(oklch(0.58 0.20  25), oklch(0.70 0.20  25));
+
+    --radius-s: 8px;
+    --radius-m: 14px;
+    --radius-l: 22px;
+
+    --shadow:
+      0 1px 2px light-dark(rgb(20 24 40 / .06), rgb(0 0 0 / .45)),
+      0 10px 30px light-dark(rgb(20 24 40 / .07), rgb(0 0 0 / .45));
+
+    --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI',
+                 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    --font-serif: 'Iowan Old Style', 'Palatino Linotype', 'Songti SC',
+                  'STSong', Georgia, 'Times New Roman', serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Menlo',
+                 Consolas, 'Liberation Mono', monospace;
+
+    --header-h: 60px;
+    --content-w: 1160px;
+  }
+
+  /* 三态主题开关：通过 :has 检测选中状态 */
+  :root:has(#theme-light:checked) { color-scheme: light; }
+  :root:has(#theme-dark:checked)  { color-scheme: dark;  }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   BASE
+   ───────────────────────────────────────────────────────────────── */
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.72;
+    background: var(--bg);
+    color: var(--text);
+    transition: background .35s, color .35s;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  p { text-wrap: pretty; }
+
+  code, kbd, samp, pre { font-family: var(--font-mono); font-size: .92em; }
+
+  code {
+    padding: .12em .4em;
+    border-radius: 5px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    font-size: .88em;
+  }
+
+  kbd {
+    padding: .1em .45em;
+    border-radius: 5px;
+    border: 1px solid var(--border-2);
+    border-block-end-width: 2px;
+    background: var(--surface);
+    font-size: .82em;
+    color: var(--muted);
+  }
+
+  samp { color: var(--ok); }
+  var  { color: var(--accent); font-style: italic; }
+  mark {
+    background: linear-gradient(transparent 55%, color-mix(in oklch, var(--accent) 45%, transparent) 55%);
+    color: inherit;
+    padding: 0 .1em;
+  }
+
+  abbr[title] {
+    text-decoration: underline dotted;
+    text-underline-offset: 3px;
+    cursor: help;
+  }
+
+  ::marker { color: var(--accent); font-weight: 600; }
+
+  /* 滚动条 */
+  * { scrollbar-width: thin; scrollbar-color: var(--border-2) transparent; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-2);
+    border-radius: 10px;
+    border: 2px solid var(--bg);
+  }
+  ::-webkit-scrollbar-track { background: transparent; }
+
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .skip-link {
+    position: fixed;
+    inset-block-start: 8px;
+    inset-inline-start: 8px;
+    z-index: 999;
+    padding: 10px 18px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: var(--radius-s);
+    font-weight: 600;
+    translate: 0 -200%;
+    transition: translate .2s;
+  }
+  .skip-link:focus-visible { translate: 0 0; }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   LAYOUT
+   ───────────────────────────────────────────────────────────────── */
+@layer layout {
+
+  /* ---------- 顶部导航 ---------- */
+  .site-header {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: var(--header-h);
+    padding-inline: clamp(16px, 4vw, 40px);
+    background: color-mix(in oklch, var(--bg) 82%, transparent);
+    border-block-end: 1px solid var(--border);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    view-transition-name: site-header;
+  }
+
+  @supports not (backdrop-filter: blur(4px)) {
+    .site-header { background: var(--bg); }
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    margin-inline-end: auto;
+    font-size: 15px;
+  }
+
+  .brand-mark {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    background:
+      conic-gradient(from var(--spin),
+        var(--accent), var(--accent-2), var(--accent-3), var(--accent));
+    animation: spin-mark 9s linear infinite;
+    box-shadow: 0 0 0 1px var(--border), inset 0 0 10px rgb(255 255 255 / .25);
+  }
+
+  @keyframes spin-mark { to { --spin: 360deg; } }
+
+  .site-nav {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .site-nav a {
+    padding: 6px 13px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    color: var(--muted);
+    transition: color .2s, background .2s;
+
+    &:hover { color: var(--text); background: var(--bg-2); }
+  }
+
+  .theme-switch {
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--bg-2);
+  }
+
+  .theme-switch label {
+    width: 28px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color .2s, background .2s;
+    user-select: none;
+
+    &:hover { color: var(--text); }
+  }
+
+  /* 选中态高亮：依靠 :has 检测根节点的 radio */
+  :root:has(#theme-auto:checked)  label[for="theme-auto"],
+  :root:has(#theme-light:checked) label[for="theme-light"],
+  :root:has(#theme-dark:checked)  label[for="theme-dark"] {
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--bg-2);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    transition: color .2s, border-color .2s;
+
+    &:hover { color: var(--accent); border-color: var(--accent); }
+  }
+
+  /* ---------- 内容容器 ---------- */
+  .wrap {
+    width: min(100% - 2 * clamp(16px, 4vw, 40px), var(--content-w));
+    margin-inline: auto;
+  }
+
+  .section {
+    padding-block: clamp(48px, 8vw, 96px);
+    scroll-margin-block-start: var(--header-h);
+    container-type: inline-size;
+    container-name: section;
+
+    & + .section { border-block-start: 1px solid var(--border); }
+  }
+
+  /* ---------- 区块标题 ---------- */
+  .section-head {
+    display: grid;
+    gap: 6px;
+    margin-block-end: clamp(24px, 4vw, 42px);
+    max-width: 62ch;
+
+    & .kicker {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    & h2 {
+      font-size: clamp(1.6rem, 3.4vw, 2.35rem);
+      letter-spacing: -.025em;
+    }
+
+    & p {
+      color: var(--muted);
+      font-size: 15.5px;
+    }
+  }
+
+  /* ---------- 页脚 ---------- */
+  .site-footer {
+    padding-block: 48px 56px;
+    border-block-start: 1px solid var(--border);
+    background: var(--bg-2);
+    color: var(--muted);
+    font-size: 13.5px;
+
+    & .wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 22px;
+      align-items: start;
+    }
+
+    & .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      color: var(--text);
+      margin-inline-end: auto;
+    }
+
+    & .footer-cols {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 48px;
+    }
+
+    & .footer-col {
+      display: grid;
+      gap: 6px;
+
+      & strong {
+        color: var(--text);
+        font-size: 12px;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        margin-block-end: 4px;
+      }
+
+      & a {
+        font-size: 13px;
+        color: var(--muted);
+        transition: color .18s;
+
+        &:hover { color: var(--accent); }
+      }
+    }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   COMPONENTS
+   ───────────────────────────────────────────────────────────────── */
+@layer components {
+
+  /* ═══════════ 1. 封面 ═══════════ */
+  .hero {
+    position: relative;
+    padding-block: clamp(64px, 12vw, 140px) clamp(48px, 8vw, 96px);
+    overflow: clip;
+    isolation: isolate;
+
+    /* 背景网格 + 光斑：多层背景 */
+    background:
+      radial-gradient(70% 60% at 18% 8%, color-mix(in oklch, var(--accent) 30%, transparent), transparent 62%),
+      radial-gradient(60% 55% at 82% 12%, color-mix(in oklch, var(--accent-2) 24%, transparent), transparent 62%),
+      linear-gradient(var(--bg), var(--bg));
+
+    /* 网格线 */
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(to right, color-mix(in oklch, var(--border) 55%, transparent) 1px, transparent 1px),
+        linear-gradient(to bottom, color-mix(in oklch, var(--border) 55%, transparent) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%);
+      opacity: .6;
+    }
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px 5px 6px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 12px;
+    color: var(--muted);
+    margin-block-end: 22px;
+    box-shadow: var(--shadow);
+
+    & .badge-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    }
+  }
+
+  .hero-title {
+    font-size: clamp(2.4rem, 7.2vw, 5rem);
+    letter-spacing: -.045em;
+    line-height: 1.02;
+    margin-block-end: 22px;
+
+    & .line {
+      display: block;
+    }
+
+    & .gradient {
+      background: linear-gradient(105deg,
+        var(--accent) 0%,
+        var(--accent-2) 45%,
+        var(--accent-3) 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      animation: gradient-shift 9s ease-in-out infinite;
+    }
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+  }
+
+  .hero-lead {
+    max-width: 56ch;
+    font-size: clamp(1rem, 1.8vw, 1.15rem);
+    color: var(--muted);
+    margin-block-end: 32px;
+
+    & strong { color: var(--text); font-weight: 600; }
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-block-end: 48px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    transition: transform .15s, filter .2s, border-color .2s, background .2s;
+
+    &:active { transform: scale(.97); }
+
+    &.primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 6px 20px color-mix(in oklch, var(--accent) 35%, transparent);
+
+      &:hover { filter: brightness(1.08); }
+    }
+
+    &.secondary {
+      color: var(--text);
+      border-color: var(--border-2);
+      background: var(--surface);
+
+      &:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+    }
+  }
+
+  /* 特性胶囊墙 */
+  .chip-wall {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip {
+    padding: 5px 13px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: color .18s, border-color .18s, transform .18s;
+
+    &:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+  }
+
+  /* ═══════════ 2. 排版 ═══════════ */
+  .type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: clamp(18px, 3vw, 32px);
+    align-items: start;
+  }
+
+  .prose {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: var(--text);
+
+    & p + p { margin-block-start: 1.1em; }
+
+    /* 首字下沉 */
+    & .drop-cap::first-letter {
+      float: inline-start;
+      font-family: var(--font-sans);
+      font-size: 3.9em;
+      line-height: .82;
+      font-weight: 800;
+      padding-inline-end: .1em;
+      padding-block-start: .06em;
+      color: var(--accent);
+      letter-spacing: -.04em;
+    }
+
+    & h3 {
+      font-family: var(--font-sans);
+      font-size: 1.18rem;
+      margin-block: 1.6em .6em;
+      letter-spacing: -.015em;
+    }
+
+    & blockquote {
+      margin-block: 1.5em;
+      padding-inline-start: 1.2em;
+      border-inline-start: 3px solid var(--accent);
+      color: var(--muted);
+      font-style: italic;
+      quotes: "「" "」" "『" "』";
+
+      &::before {
+        content: open-quote;
+        color: var(--accent);
+        font-size: 1.4em;
+        line-height: 0;
+        margin-inline-end: 2px;
+      }
+
+      &::after {
+        content: close-quote;
+        color: var(--accent);
+        font-size: 1.4em;
+        line-height: 0;
+        margin-inline-start: 2px;
+      }
+    }
+
+    & ul {
+      margin-block: 1em;
+      padding-inline-start: 1.4em;
+      font-family: var(--font-sans);
+      font-size: .95rem;
+
+      & > li {
+        list-style: none;
+        position: relative;
+        padding-inline-start: 1.1em;
+        margin-block-end: .4em;
+
+        &::before {
+          content: "▸";
+          position: absolute;
+          inset-inline-start: 0;
+          color: var(--accent);
+          font-size: .85em;
+        }
+      }
+    }
+  }
+
+  /* 词条卡片 */
+  .glossary {
+    display: grid;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+
+    & dt {
+      padding: 10px 16px;
+      background: var(--surface);
+      font-weight: 600;
+      font-size: 13.5px;
+      font-family: var(--font-mono);
+      color: var(--accent);
+    }
+
+    & dd {
+      padding: 10px 16px 14px;
+      background: var(--surface);
+      font-size: 14px;
+      color: var(--muted);
+      margin-inline-start: 0;
+
+      & + dt { border-block-start: 1px solid var(--border); }
+    }
+  }
+
+  /* Ruby 注音 + 竖排示例 */
+  .type-figures {
+    display: grid;
+    gap: 18px;
+
+    & figure {
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-m);
+    }
+
+    & figcaption {
+      margin-block-start: 12px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--dim);
+      letter-spacing: .04em;
+    }
+  }
+
+  ruby {
+    font-size: 1.5rem;
+    ruby-position: over;
+
+    & rt {
+      font-size: .42em;
+      color: var(--accent);
+      font-family: var(--font-sans);
+      font-weight: 500;
+    }
+  }
+
+  .vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    letter-spacing: .18em;
+    height: 220px;
+    color: var(--muted);
+    border-inline-start: 1px solid var(--border);
+    padding-inline-start: 16px;
+  }
+
+  .inline-demo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    align-items: baseline;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* ═══════════ 3. 布局 ═══════════ */
+  .card {
+    padding: clamp(18px, 2.6vw, 28px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow);
+    transition: border-color .2s, transform .25s;
+
+    &:hover {
+      border-color: var(--border-2);
+      transform: translateY(-2px);
+    }
+  }
+
+  /* Subgrid 对齐演示 */
+  .subgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+    grid-template-rows: auto auto auto;
+    gap: 18px;
+
+    & .subgrid-item {
+      grid-row: span 3;
+      display: grid;
+      grid-template-rows: subgrid;
+      gap: 4px 0;
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-m);
+      transition: border-color .2s, background .2s;
+
+      &:hover { border-color: var(--accent); }
+
+      & h3 {
+        font-size: 1rem;
+        letter-spacing: -.01em;
+      }
+
+      & p {
+        font-size: 13.5px;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      & span {
+        font-family: var(--font-mono);
+        font-size: 11.5px;
+        color: var(--dim);
+        padding-block-start: 8px;
+        border-block-start: 1px solid var(--border);
+        margin-block-start: 8px;
+        align-self: end;
+      }
+    }
+  }
+
+  /* 容器查询演示 */
+  .cq-host {
+    container-type: inline-size;
+    container-name: card-demo;
+    padding: 22px;
+    border: 1px dashed var(--border-2);
+    border-radius: var(--radius-m);
+    background: var(--bg-2);
+    margin-block-start: 20px;
+
+    & .cq-card {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      padding: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-m);
+      transition: all .3s;
+    }
+
+    & .cq-visual {
+      aspect-ratio: 16 / 9;
+      border-radius: var(--radius-s);
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    & .cq-body h4 {
+      font-size: 15px;
+      margin-block-end: 4px;
+    }
+
+    & .cq-body p {
+      font-size: 13px;
+      color: var(--muted);
+    }
+  }
+
+  /* 宽容器：切换为横向布局 */
+  @container card-demo (min-width: 460px) {
+    .cq-card {
+      grid-template-columns: 140px 1fr;
+      align-items: center;
+    }
+  }
+
+  /* 样式查询：卡片带 data-variant="compact" 时缩小 */
+  .cq-card[data-variant="compact"] { padding: 12px; }
+
+  @container card-demo style(--compact: true) {
+    .cq-card { font-size: 13px; }
+  }
+
+  /* ═══════════ 4. 颜色 ═══════════ */
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+
+    & .swatch {
+      aspect-ratio: 4 / 5;
+      border-radius: var(--radius-m);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #fff;
+      text-shadow: 0 1px 2px rgb(0 0 0 / .5);
+      border: 1px solid var(--border);
+      transition: transform .2s;
+
+      &:hover { transform: translateY(-4px) scale(1.02); }
+
+      & strong {
+        display: block;
+        font-size: 12.5px;
+        font-family: var(--font-sans);
+        margin-block-end: 2px;
+      }
+
+      & span { opacity: .85; font-size: 10.5px; }
+    }
+  }
+
+  /* 渐变展示 */
+  .gradient-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+
+    & .grad {
+      aspect-ratio: 16 / 10;
+      border-radius: var(--radius-m);
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: end start;
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #fff;
+      text-shadow: 0 1px 3px rgb(0 0 0 / .55);
+    }
+  }
+
+  /* color-mix 演示 */
+  .mix-bar {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    height: 56px;
+    border-radius: var(--radius-s);
+    overflow: hidden;
+    border: 1px solid var(--border);
+
+    & span {
+      display: grid;
+      place-items: center;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text);
+      mix-blend-mode: difference;
+      filter: invert(1);
+    }
+  }
+
+  .mix-row {
+    display: grid;
+    grid-template-columns: minmax(0, 200px) 1fr;
+    gap: 16px;
+    align-items: center;
+    margin-block-start: 16px;
+
+    & .mix-label {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+
+      & code { font-size: .9em; }
+    }
+  }
+
+  @media (max-width: 560px) {
+    .mix-row { grid-template-columns: 1fr; gap: 6px; }
+  }
+
+  /* ═══════════ 5. 交互 ═══════════ */
+  .tabs {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-l);
+    overflow: hidden;
+
+    & .tabs-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px;
+      padding: 6px;
+      background: var(--bg-2);
+      border-block-end: 1px solid var(--border);
+
+      & a {
+        padding: 8px 16px;
+        border-radius: var(--radius-s);
+        font-size: 13.5px;
+        font-weight: 500;
+        color: var(--muted);
+        transition: color .18s, background .18s;
+
+        &:hover { color: var(--text); background: color-mix(in oklch, var(--surface) 60%, transparent); }
+      }
+
+      /* 当前面板对应的标签高亮：靠 :target + :has 联动 */
+      & a[href="#tab-1"] { ... }
+    }
+
+    & .tabs-body {
+      padding: clamp(18px, 3vw, 30px);
+      min-height: 180px;
+    }
+
+    & .tab-panel {
+      display: none;
+      animation: fade-up .3s cubic-bezier(.2,.8,.25,1);
+
+      & h3 { font-size: 1.1rem; margin-block-end: 10px; }
+      & p { color: var(--muted); font-size: 14px; margin-block-end: 12px; }
+      & ul { padding-inline-start: 1.2em; color: var(--muted); font-size: 14px; }
+      & ul li { margin-block-end: 6px; }
+    }
+
+    /* 默认显示第一个 */
+    &:not(:has(.tab-panel:target)) .tab-panel:first-child { display: block; }
+    & .tab-panel:target { display: block; }
+  }
+
+  /* 标签高亮：当某个面板被 target 时，对应标签变色 */
+  .tabs:has(#tab-1:target) .tabs-nav a[href="#tab-1"],
+  .tabs:has(#tab-2:target) .tabs-nav a[href="#tab-2"],
+  .tabs:has(#tab-3:target) .tabs-nav a[href="#tab-3"] {
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+
+  @keyframes fade-up {
+    from { opacity: 0; translate: 0 6px; }
+    to   { opacity: 1; translate: 0 0; }
+  }
+
+  /* 折叠面板 */
+  .accordion {
+    display: grid;
+    gap: 10px;
+    margin-block-start: 16px;
+
+    & details {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-m);
+      overflow: clip;
+      transition: border-color .2s;
+
+      &[open] {
+        border-color: var(--accent);
+        background: linear-gradient(180deg,
+          color-mix(in oklch, var(--accent) 6%, var(--surface)),
+          var(--surface) 40%);
+      }
+
+      & summary {
+        padding: 14px 18px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        list-style: none;
+
+        &::-webkit-details-marker { display: none; }
+
+        /* 加号 / 减号 */
+        &::after {
+          content: "";
+          margin-inline-start: auto;
+          width: 16px;
+          height: 16px;
+          background-image:
+            linear-gradient(var(--muted), var(--muted)),
+            linear-gradient(var(--muted), var(--muted));
+          background-size: 100% 2px, 2px 100%;
+          background-position: center;
+          background-repeat: no-repeat;
+          transition: transform .25s, background .25s;
+        }
+      }
+
+      &[open] summary::after {
+        transform: rotate(135deg);
+        background-image:
+          linear-gradient(var(--accent), var(--accent)),
+          linear-gradient(var(--accent), var(--accent));
+      }
+
+      & .details-body {
+        padding: 0 18px 16px;
+        color: var(--muted);
+        font-size: 13.5px;
+        line-height: 1.8;
+      }
+    }
+  }
+
+  /* 复选框技巧：无需脚本的开关 */
+  .toggle-demo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    margin-block-start: 16px;
+
+    & input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    & label {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      border-radius: 999px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: background .25s, border-color .25s;
+      flex-shrink: 0;
+
+      &::before {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        inset-block-start: 3px;
+        inset-inline-start: 3px;
+        border-radius: 50%;
+        background: var(--dim);
+        transition: transform .25s, background .25s;
+      }
+    }
+
+    & input:checked + label {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-color: transparent;
+
+      &::before {
+        transform: translateX(20px);
+        background: #fff;
+      }
+    }
+
+    & .toggle-text {
+      font-size: 14px;
+      color: var(--muted);
+
+      & strong { color: var(--text); }
+    }
+
+    & .toggle-state { font-family: var(--font-mono); font-size: 12px; color: var(--dim); }
+    & .toggle-state::before { content: "关闭"; }
+    & input:checked ~ .toggle-text .toggle-state::before {
+      content: "开启";
+      color: var(--ok);
+    }
+  }
+
+  /* Popover */
+  .popover-demo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-block-start: 16px;
+  }
+
+  [popover] {
+    padding: 20px 22px;
+    max-width: 340px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    box-shadow: 0 20px 50px light-dark(rgb(20 24 40 / .18), rgb(0 0 0 / .6));
+    font-size: 13.5px;
+    line-height: 1.7;
+
+    &::backdrop {
+      background: light-dark(rgb(20 24 40 / .35), rgb(0 0 0 / .6));
+    }
+
+    & h4 { font-size: 15px; margin-block-end: 6px; }
+    & p { color: var(--muted); margin-block-end: 14px; }
+  }
+
+  /* 入场动画 */
+  @starting-style {
+    [popover]:popover-open {
+      opacity: 0;
+      transform: translateY(-8px) scale(.96);
+    }
+  }
+
+  [popover]:popover-open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition:
+      opacity .25s,
+      transform .25s,
+      overlay .25s allow-discrete,
+      display .25s allow-discrete;
+  }
+
+  /* ═══════════ 6. 数据 ═══════════ */
+  .data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 16px;
+  }
+
+  .stat {
+    padding: 20px 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+
+    & .stat-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    & .stat-value {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: -.03em;
+      font-variant-numeric: tabular-nums;
+      margin-block: 4px 14px;
+
+      & small {
+        font-size: .42em;
+        font-weight: 500;
+        color: var(--muted);
+        margin-inline-start: 4px;
+      }
+    }
+  }
+
+  /* progress / meter 自定义 */
+  progress,
+  meter {
+    display: block;
+    width: 100%;
+    height: 9px;
+    border: none;
+    border-radius: 999px;
+    background: var(--bg-2);
+    overflow: hidden;
+    accent-color: var(--accent);
+  }
+
+  progress::-webkit-progress-bar {
+    background: var(--bg-2);
+    border-radius: 999px;
+  }
+
+  progress::-webkit-progress-value {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-radius: 999px;
+  }
+
+  progress::-moz-progress-bar {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-radius: 999px;
+  }
+
+  /* 数据表 */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    font-variant-numeric: tabular-nums;
+
+    & caption {
+      text-align: start;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--dim);
+      padding-block-end: 12px;
+    }
+
+    & th, & td {
+      padding: 10px 14px;
+      text-align: start;
+      border-block-end: 1px solid var(--border);
+    }
+
+    & th {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: .02em;
+      background: var(--bg-2);
+    }
+
+    & tbody tr {
+      transition: background .15s;
+
+      &:nth-child(even) { background: color-mix(in oklch, var(--bg-2) 55%, transparent); }
+      &:hover { background: color-mix(in oklch, var(--accent) 8%, var(--surface)); }
+    }
+
+    & td:last-child { font-family: var(--font-mono); font-size: 12.5px; }
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    scrollbar-gutter: stable;
+  }
+
+  /* ═══════════ 7. 滚动吸附 ═══════════ */
+  .snap-scroller {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 4px;
+    overscroll-behavior-x: contain;
+    padding-block-end: 12px;
+    scrollbar-width: thin;
+
+    & .snap-item {
+      flex: 0 0 min(78vw, 320px);
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      min-height: 190px;
+      padding: 22px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-l);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+      transition: border-color .2s, transform .2s;
+
+      &:hover {
+        border-color: var(--accent);
+        transform: translateY(-3px);
+      }
+
+      & h4 { font-size: 15px; }
+      & p { color: var(--muted); font-size: 13px; }
+
+      & .snap-index {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--accent);
+        letter-spacing: .1em;
+        font-weight: 600;
+      }
+
+      & .snap-foot {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--dim);
+        padding-block-start: 10px;
+        border-block-start: 1px solid var(--border);
+      }
+    }
+
+    &::-webkit-scrollbar { height: 8px; }
+    &::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 8px; }
+  }
+
+  /* ═══════════ 8. 表单 ═══════════ */
+  .form-card {
+    padding: clamp(22px, 3vw, 36px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow);
+
+    & .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+      gap: 18px;
+    }
+
+    & .field {
+      display: grid;
+      gap: 6px;
+
+      & label {
+        font-size: 12.5px;
+        font-weight: 600;
+        letter-spacing: .02em;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        & .req {
+          color: var(--err);
+          font-size: 13px;
+        }
+      }
+
+      & .hint {
+        font-size: 11.5px;
+        color: var(--dim);
+      }
+
+      & input,
+      & select,
+      & textarea {
+        width: 100%;
+        padding: 10px 14px;
+        font-size: 14px;
+        color: var(--text);
+        background: var(--bg-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-s);
+        transition: border-color .2s, background .2s, box-shadow .2s;
+
+        &::placeholder { color: var(--dim); }
+
+        &:hover { border-color: var(--border-2); }
+
+        &:focus {
+          outline: none;
+          border-color: var(--accent);
+          background: var(--surface);
+          box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 22%, transparent);
+        }
+
+        /* 较新的表单伪类 */
+        &:user-invalid {
+          border-color: var(--err);
+          box-shadow: 0 0 0 3px color-mix(in oklch, var(--err) 18%, transparent);
+        }
+
+        &:user-valid:not(:placeholder-shown) {
+          border-color: var(--ok);
+        }
+      }
+
+      & textarea { resize: vertical; min-height: 96px; }
+
+      & .field-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      & input[type="range"] {
+        accent-color: var(--accent);
+        padding: 0;
+        height: 6px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+      }
+
+      & input[type="color"] {
+        padding: 3px;
+        width: 52px;
+        height: 36px;
+        cursor: pointer;
+      }
+
+      & input[type="file"] {
+        padding: 8px 12px;
+        font-size: 13px;
+        cursor: pointer;
+
+        &::file-selector-button {
+          margin-inline-end: 12px;
+          padding: 6px 14px;
+          font-size: 12.5px;
+          font-weight: 600;
+          font-family: var(--font-sans);
+          color: var(--text);
+          background: var(--surface);
+          border: 1px solid var(--border-2);
+          border-radius: var(--radius-s);
+          cursor: pointer;
+          transition: border-color .18s, color .18s;
+
+          &:hover { border-color: var(--accent); color: var(--accent); }
+        }
+      }
+
+      & input[type="checkbox"],
+      & input[type="radio"] {
+        accent-color: var(--accent);
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+      }
+
+      &.check-field {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        font-size: 13.5px;
+        color: var(--muted);
+
+        & label {
+          font-weight: 400;
+          color: var(--muted);
+          font-size: 13.5px;
+        }
+      }
+    }
+
+    & .form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-block-start: 24px;
+      padding-block-start: 22px;
+      border-block-start: 1px solid var(--border);
+    }
+  }
+
+  /* 内联 dialog 展示 */
+  .dialog-demo {
+    margin-block-start: 18px;
+
+    & dialog {
+      position: static;
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      padding: 22px 24px;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-m);
+      box-shadow: var(--shadow);
+
+      & h4 { font-size: 15px; margin-block-end: 8px; }
+      & p { color: var(--muted); font-size: 13.5px; }
+
+      & .dialog-actions {
+        display: flex;
+        gap: 10px;
+        margin-block-start: 16px;
+      }
+    }
+  }
+
+  /* ═══════════ 9. 滚动驱动动画（可选增强） ═══════════ */
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 8% cover 28%;
+    }
+
+    @keyframes reveal-in {
+      from { opacity: 0; translate: 0 40px; scale: .98; }
+      to   { opacity: 1; translate: 0 0;    scale: 1; }
+    }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   UTILITIES
+   ───────────────────────────────────────────────────────────────── */
+@layer utilities {
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .mt-1 { margin-block-start: 6px; }
+  .mt-2 { margin-block-start: 12px; }
+  .mt-3 { margin-block-start: 20px; }
+  .mt-4 { margin-block-start: 32px; }
+
+  .text-muted { color: var(--muted); }
+  .text-dim   { color: var(--dim); }
+  .mono       { font-family: var(--font-mono); }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   响应式 + 偏好适配
+   ───────────────────────────────────────────────────────────────── */
+@media (max-width: 720px) {
+  .site-nav { display: none; }
+  .site-header { gap: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --border: light-dark(oklch(0.6 0 0), oklch(0.6 0 0));
+    --muted: var(--text);
+  }
+}
+
+@media (hover: none) {
+  .card:hover,
+  .swatch:hover,
+  .chip:hover,
+  .snap-item:hover {
+    transform: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- 主题三态：隐藏的 radio 组，由 :has 驱动 -->
+<input type="radio" name="theme" id="theme-auto" class="visually-hidden" checked>
+<input type="radio" name="theme" id="theme-light" class="visually-hidden">
+<input type="radio" name="theme" id="theme-dark" class="visually-hidden">
+
+<a class="skip-link" href="#main">跳到正文</a>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     顶部导航
+     ═══════════════════════════════════════════════════════════════ -->
+<header class="site-header">
+  <a href="#top" class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span>特性图鉴</span>
+  </a>
+
+  <nav class="site-nav" aria-label="主导航">
+    <a href="#type">排版</a>
+    <a href="#layout">布局</a>
+    <a href="#color">颜色</a>
+    <a href="#interactive">交互</a>
+    <a href="#data">数据</a>
+    <a href="#forms">表单</a>
+  </nav>
+
+  <div class="theme-switch" role="group" aria-label="主题切换">
+    <label for="theme-auto" title="跟随系统" aria-label="跟随系统">A</label>
+    <label for="theme-light" title="浅色" aria-label="浅色">☀</label>
+    <label for="theme-dark" title="深色" aria-label="深色">☾</label>
+  </div>
+
+  <button class="icon-btn" type="button" popovertarget="about-pop" aria-label="关于">?</button>
+</header>
+
+<main id="main">
+
+  <!-- ═════════════════════════════════════════════════════════════
+       1. 封面
+       ═════════════════════════════════════════════════════════════ -->
+  <section class="hero" id="top">
+    <div class="wrap">
+      <span class="hero-badge">
+        <span class="badge-dot" aria-hidden="true">✦</span>
+        纯 HTML · 纯 CSS · 零脚本
+      </span>
+
+      <h1 class="hero-title">
+        <span class="line">现代 Web 特性</span>
+        <span class="line gradient">图鉴 · 2025</span>
+      </h1>
+
+      <p class="hero-lead">
+        一页纸的展览，陈列着这些年浏览器里悄悄长出的一切：
+        <strong>层叠、容器查询、颜色空间、原生弹层、滚动吸附</strong>。
+        没有一行 JavaScript，所有交互由 HTML 属性、CSS 选择器与伪类驱动。
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn primary" href="#type">开始浏览</a>
+        <a class="btn secondary" href="#interactive">直达交互</a>
+      </div>
+
+      <div class="chip-wall" aria-label="特性清单">
+        <span class="chip">@layer</span>
+        <span class="chip">@property</span>
+        <span class="chip">@container</span>
+        <span class="chip">:has()</span>
+        <span class="chip">subgrid</span>
+        <span class="chip">oklch()</span>
+        <span class="chip">color-mix()</span>
+        <span class="chip">light-dark()</span>
+        <span class="chip">popover</span>
+        <span class="chip">scroll-snap</span>
+        <span class="chip">:user-invalid</span>
+        <span class="chip">view-timeline</span>
+        <span class="chip">text-wrap</span>
+        <span class="chip">dvh</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       2. 排版
+       ═════════════════════════════════════════════════════════════ -->
+  <section class="section" id="type">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <span class="kicker">01 — Typography</span>
+        <h2>排版：从首字到注音</h2>
+        <p>原生 HTML 元素已经足够表达复杂的文字结构。</p>
+      </header>
+
+      <div class="type-grid reveal">
+        <article class="prose">
+          <p class="drop-cap">
+            排版的本质，是让文字在被读到之前，先被看见。首字下沉（drop cap）通过
+            <code>::first-letter</code> 伪元素实现，不需要额外包裹标签。
+            段落中的 <mark>高亮</mark>、<abbr title="Cascading Style Sheets">CSS</abbr>
+            缩写，以及 <code>&lt;code&gt;</code>、<code>&lt;kbd&gt;</code>、
+            <code>&lt;samp&gt;</code>、<code>&lt;var&gt;</code> 等语义元素，
+            都直接映射到浏览器默认样式或一层薄薄的修饰。
+          </p>
+
+          <blockquote>
+            排版不是装饰，是让信息在页面里找到自己的呼吸。
+          </blockquote>
+
+          <h3>行内元素的语义化清单</h3>
+          <p>
+            按 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> 打开命令面板，
+            输入 <code>toggle</code> 试试；示例输出为 <samp>build succeeded</samp>。
+            函数签名里，变量写作 <var>--hue</var>，
+            时间写作 <time datetime="2025-01-15">2025 年 1 月</time>，
+            地址写作 <address style="display:inline;font-style:normal">北京 · 中关村</address>。
+          </p>
+
+          <h3>列表与标记</h3>
+          <ul>
+            <li><code>::marker</code> 把列表符号变成了强调色。</li>
+            <li><code>quotes</code> 属性让 <code>blockquote</code> 自带中文引号。</li>
+            <li><code>text-wrap: pretty</code> 在段落末尾避免孤字。</li>
+            <li><code>text-wrap: balance</code> 让标题行宽更均衡。</li>
+          </ul>
+        </article>
+
+        <div class="type-figures">
+          <figure>
+            <ruby>
+              漢<rt>hàn</rt>字<rt>zì</rt>排<rt>pái</rt>版<rt>bǎn</rt>
+            </ruby>
+            <figcaption>ruby / rt —— 原生注音</figcaption>
+          </figure>
+
+          <figure>
+            <p class="vertical-text">竖排 · 自右而左</p>
+            <figcaption>writing-mode: vertical-rl</figcaption>
+          </figure>
+
+          <figure>
+            <dl class="glossary">
+              <dt>::first-letter</dt>
+              <dd>选中块级元素的首字母，常用于首字下沉。</dd>
+              <dt>::marker</dt>
+              <dd>列表项符号，可以直接改色、改字重。</dd>
+              <dt>::selection</dt>
+              <dd>用户选中文本时的背景。</dd>
+            </dl>
+            <figcaption>dl / dt / dd —— 定义列表</figcaption>
+          </figure>
+
+          <figure>
+            <div class="inline-demo">
+              <code>code</code>
+              <kbd>kbd</kbd>
+              <samp>samp</samp>
+              <var>var</var>
+              <mark>mark</mark>
+              <abbr title="Abbreviation">abbr</abbr>
+              <time datetime="2025-11-04">time</time>
+            </div>
+            <figcaption>行内语义元素一览</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       3. 布局
+       ═════════════════════════════════════════════════════════════ -->
+  <section class="section" id="layout">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <span class="kicker">02 — Layout</span>
+        <h2>布局：子网格与容器查询</h2>
+        <p>行对齐不再需要等高卡片脚本，响应式也不再依赖视口。</p>
+      </header>
+
+      <h3 class="mt-3">Subgrid —— 跨卡片对齐</h3>
+      <div class="subgrid mt-2 reveal">
+        <div class="subgrid-item">
+          <h3>边缘节点</h3>
+          <p>分布在 12 个区域，承担静态资源与鉴权回源。</p>
+          <span>edge · 12 nodes</span>
+        </div>
+        <div class="subgrid-item">
+          <h3>计算集群</h3>
+          <p>自动扩缩的容器组，峰值承载 320 个并发任务。</p>
+          <span>compute · 320 pods</span>
+        </div>
+        <div class="subgrid-item">
+          <h3>存储层</h3>
+          <p>对象存储与冷备归档，按月滚动清理。</p>
+          <span>storage · 4.2 TB</span>
+        </div>
+      </div>
+
+      <h3 class="mt-4">容器查询 —— 卡片自己决定布局</h3>
+      <p class="text-muted mt-1" style="font-size:13.5px">
+        拖拽窗口或缩小浏览器宽度，下面的卡片会依据<strong>自身容器宽度</strong>切换横竖布局，
+        而不是依据视口。
+      </p>
+
+      <div class="cq-host reveal">
+        <div class="cq-card">
+          <div class="cq-visual" aria-hidden="true">container</div>
+          <div class="cq-body">
+            <h4>响应式由容器决定</h4>
+            <p>
+              <code>@container card-demo (min-width: 460px)</code> 让卡片在容器变宽时
+              从竖排切换为横排，与整个窗口的宽度无关。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cq-host reveal mt-3">
+        <div class="cq-card" data-variant="compact">
+          <div class="cq-visual" aria-hidden="true">compact</div>
+          <div class="cq-body">
+            <h4>带变体的紧凑卡片</h4>
+            <p>
+              通过 <code>data-variant="compact"</code> 与
+              <code>@container style()</code> 做样式查询，仅调整该卡片内部的密度。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       4. 颜色
+       ═════════════════════════════════════════════════════════════ -->
+  <section class="section" id="color">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <span class="kicker">03 — Color</span>
+        <h2>颜色：感知均匀的色域</h2>
+        <p><code>oklch()</code> 让明度、彩度、色相可独立控制；<code>color-mix()</code> 负责混色。</p>
+      </header>
+
+      <div class="swatch-grid reveal">
+        <div class="swatch" style="background: oklch(0.66 0.20 262)">
+          <strong>Primary</strong><span>oklch(.66 .20 262)</span>
+        </div>
+        <div class="swatch" style="background: oklch(0.72 0.17 317)">
+          <strong>Secondary</strong><span>oklch(.72 .17 317)</span>
+        </div>
+        <div class="swatch" style="background: oklch(0.68 0.15 207)">
+          <strong>Accent</strong><span>oklch(.68 .15 207)</span>
+        </div>
+        <div class="swatch" style="background: oklch(0.62 0.18 28)">
+          <strong>Coral</strong><span>oklch(.62 .18 28)</span>
+        </div>
+        <div class="swatch" style="background: oklch(0.70 0.16 150)">
+          <strong>Mint</strong><span>oklch(.70 .16 150)</span>
+        </div>
+        <div class="swatch" style="background: oklch(0.76 0.16 75)">
+          <strong>Amber</strong><span>oklch(.76 .16 75)</span>
+        </div>
+      </div>
+
+      <h3 class="mt-4">color-mix —— 两种颜色之间的渐变</h3>
+      <div class="mix-row reveal">
+        <div class="mix-label">
+          <code>color-mix(in oklch, accent, surface)</code>
+        </div>
+        <div class="mix-bar">
+          <span>0%</span><span>12%</span><span>25%</span><span>37%</span><span>50%</span><span>62%</span><span>75%</span><span>87%</span><span>100%</span>
+        </div>
+      </div>
+      <div class="mix-row reveal">
+        <div class="mix-label">
+          <code>color-mix(in oklch, accent, accent-2)</code>
+        </div>
+        <div class="mix-bar" style="grid-template-columns: repeat(9, 1fr);">
+          <span style="background: color-mix(in oklch, var(--accent) 100%, var(--accent-2) 0%)">100%</span>
+          <span style="background: color-mix(in oklch, var(--accent) 87%, var(--accent-2) 13%)">87%</span>
+          <span style="background: color-mix(in oklch, var(--accent) 75%, var(--accent-2) 25%)">75%</span>
+          <span style="background: color-mix(in oklch, var(--accent) 62%, var(--accent-2) 38%)">62%</span>
+          <span style="background: color-mix(in oklch, var(--accent) 50%, var(--accent-2) 50%)">50%</span>
+          <span style="background: color-mix(in oklch, var(--accent) 38%, var(--accent-2) 62%)">38%</span>
+          <span style="background: color-mix(in oklch, var(--accent) 25%, var(--accent-2) 75%)">25%</span>
+          <span style="background: color-mix(in oklch, var(--accent) 13%, var(--accent-2) 87%)">13%</span>
+          <span style="background: color-mix(in oklch, var(--accent) 0%, var(--accent-2) 100%)">0%</span>
+        </div>
+      </div>
+
+      <h3 class="mt-4">渐变</h3>
+      <div class="gradient-grid reveal">
+        <div class="grad" style="background: linear-gradient(135deg, oklch(0.66 0.20 262), oklch(0.72 0.17 317))">
+          linear-gradient
+        </div>
+        <div class="grad" style="background: radial-gradient(circle at 30% 30%, oklch(0.72 0.17 317), oklch(0.62 0.18 28) 70%)">
+          radial-gradient
+        </div>
+        <div class="grad" style="background: conic-gradient(from 45deg, oklch(0.66 0.20 262), oklch(0.72 0.17 317), oklch(0.68 0.15 207), oklch(0.66 0.20 262))">
+          conic-gradient
+        </div>
+        <div class="grad" style="background: repeating-linear-gradient(45deg, oklch(0.66 0.20 262) 0 12px, oklch(0.72 0.17 317) 12px 24px)">
+          repeating-linear
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       5. 交互
+       ═════════════════════════════════════════════════════════════ -->
+  <section class="section" id="interactive">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <span class="kicker">04 — Interaction</span>
+        <h2>交互：不写一行脚本</h2>
+        <p>所有切换都由锚点、复选框、details 与 popover 原生驱动。</p>
+      </header>
+
+      <h3 class="mt-3">:target 标签页</h3>
+      <div class="tabs mt-2 reveal">
+        <nav class="tabs-nav" aria-label="示例标签页">
+          <a href="#tab-1">概览</a>
+          <a href="#tab-2">实现</a>
+          <a href="#tab-3">注意</a>
+        </nav>
+        <div class="tabs-body">
+          <div id="tab-1" class="tab-panel">
+            <h3>概览</h3>
+            <p>
+              点击上方标签，URL 的片段标识（hash）会随之变化。
+              <code>:target</code> 伪类捕获当前被定位的面板，
+              对应的标签通过 <code>:has(#tab-x:target)</code> 高亮。
+            </p>
+            <ul>
+              <li>面板默认全部隐藏；</li>
+              <li>首个面板在没有 target 时显示；</li>
+              <li>整页无需任何脚本。</li>
+            </ul>
+          </div>
+          <div id="tab-2" class="tab-panel">
+            <h3>实现</h3>
+            <p>核心只有三条规则：</p>
+            <ul>
+              <li><code>.tab-panel { display: none }</code></li>
+              <li><code>.tabs .tab-panel:target { display: block }</code></li>
+              <li><code>.tabs:not(:has(.tab-panel:target)) .tab-panel:first-child { display: block }</code></li>
+            </ul>
+          </div>
+          <div id="tab-3" class="tab-panel">
+            <h3>注意</h3>
+            <p>
+              若浏览器不支持 <code>:has()</code>，标签不会高亮，
+              但面板切换依旧工作；如果点击了页面其他锚点，标签页会回到第一个面板。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="mt-4">details / summary 折叠面板</h3>
+      <div class="accordion reveal">
+        <details open>
+          <summary>为什么要用层叠层（@layer）？</summary>
+          <div class="details-body">
+            层叠层把样式拆成若干有序分组，优先级不再由选择器长度决定。
+            本页使用 <code>reset → tokens → base → layout → components → utilities</code>
+            七层，让覆盖关系一目了然。
+          </div>
+        </details>
+        <details>
+          <summary>容器查询和媒体查询的区别？</summary>
+          <div class="details-body">
+            媒体查询看视口，容器查询看最近的 <code>container-type</code> 祖先。
+            当组件需要在侧边栏和主区域呈现不同形态时，容器查询更合适。
+          </div>
+        </details>
+        <details>
+          <summary>popover 和 dialog 有什么区别？</summary>
+          <div class="details-body">
+            <code>&lt;dialog&gt;</code> 需要 <code>showModal()</code> 才能进入模态；
+            <code>popover</code> 可由 <code>popovertarget</code> 属性直接触发，
+            但默认是非模态浮层，点外部即可关闭。
+          </div>
+        </details>
+      </div>
+
+      <h3 class="mt-4">复选框开关 —— :checked 驱动的状态</h3>
+      <div class="toggle-demo reveal">
+        <input type="checkbox" id="demo-toggle">
+        <label for="demo-toggle" aria-label="示例开关"></label>
+        <div class="toggle-text">
+          <strong>实验性采样</strong><br>
+          <span class="toggle-state"></span>
+        </div>
+      </div>
+
+      <h3 class="mt-4">popover —— 原生浮层</h3>
+      <div class="popover-demo reveal">
+        <button class="btn secondary" type="button" popovertarget="pop-info">信息浮层</button>
+        <button class="btn secondary" type="button" popovertarget="pop-help">帮助浮层</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       6. 数据
+       ═════════════════════════════════════════════════════════════ -->
+  <section class="section" id="data">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <span class="kicker">05 — Data</span>
+        <h2>数据：进度、仪表与表格</h2>
+        <p>原生 progress 与 meter 也能被 CSS 完全接管。</p>
+      </header>
+
+      <div class="data-grid reveal">
+        <div class="stat">
+          <span class="stat-label">CPU 占用</span>
+          <div class="stat-value">68<small>%</small></div>
+          <progress value="68" max="100" aria-label="CPU 占用">68%</progress>
+        </div>
+
+        <div class="stat">
+          <span class="stat-label">内存压力</span>
+          <div class="stat-value">54<small>%</small></div>
+          <meter value="0.54" min="0" max="1" low="0.4" high="0.8" optimum="0.3" aria-label="内存压力">54%</meter>
+        </div>
+
+        <div class="stat">
+          <span class="stat-label">任务进度</span>
+          <div class="stat-value">82<small>%</small></div>
+          <progress value="82" max="100" aria-label="任务进度">82%</progress>
+        </div>
+      </div>
+
+      <h3 class="mt-4">服务状态表</h3>
+      <div class="table-wrap mt-2 reveal">
+        <table class="data-table">
+          <caption>最近 24 小时运行数据（模拟）</caption>
+          <thead>
+            <tr>
+              <th scope="col">服务</th>
+              <th scope="col">区域</th>
+              <th scope="col">请求数</th>
+              <th scope="col">错误率</th>
+              <th scope="col">P95 延迟</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>nginx</td>
+              <td>cn-north</td>
+              <td>1,284,301</td>
+              <td>0.02%</td>
+              <td>8 ms</td>
+            </tr>
+            <tr>
+              <td>postgres</td>
+              <td>cn-north</td>
+              <td>92,113</td>
+              <td>0.00%</td>
+              <td>14 ms</td>
+            </tr>
+            <tr>
+              <td>redis</td>
+              <td>cn-north</td>
+              <td>3,842,900</td>
+              <td>0.01%</td>
+              <td>2 ms</td>
+            </tr>
+            <tr>
+              <td>worker</td>
+              <td>cn-east</td>
+              <td>18,442</td>
+              <td>0.41%</td>
+              <td>112 ms</td>
+            </tr>
+            <tr>
+              <td>edge-cdn</td>
+              <td>global</td>
+              <td>8,120,555</td>
+              <td>0.00%</td>
+              <td>1 ms</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       7. 滚动吸附
+       ═════════════════════════════════════════════════════════════ -->
+  <section class="section" id="scroll">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <span class="kicker">06 — Scroll Snap</span>
+        <h2>滚动：吸附与横向流</h2>
+        <p>左右拖动卡片，停止时会吸附到最近的卡片起点。</p>
+      </header>
+
+      <div class="snap-scroller reveal">
+        <article class="snap-item">
+          <span class="snap-index">01 / 05</span>
+          <div>
+            <h4>scroll-snap-type</h4>
+            <p>在容器上声明 <code>x mandatory</code>，滚动停止时强制吸附。</p>
+          </div>
+          <span class="snap-foot">容器属性</span>
+        </article>
+
+        <article class="snap-item">
+          <span class="snap-index">02 / 05</span>
+          <div>
+            <h4>scroll-snap-align</h4>
+            <p>在子元素上声明对齐起点，<code>start</code> 表示左对齐。</p>
+          </div>
+          <span class="snap-foot">子元素属性</span>
+        </article>
+
+        <article class="snap-item">
+          <span class="snap-index">03 / 05</span>
+          <div>
+            <h4>scroll-snap-stop</h4>
+            <p><code>always</code> 让每次滑动只跨过一个卡片。</p>
+          </div>
+          <span class="snap-foot">吸附强度</span>
+        </article>
+
+        <article class="snap-item">
+          <span class="snap-index">04 / 05</span>
+          <div>
+            <h4>overscroll-behavior</h4>
+            <p>防止滚动传递到父容器，横向流更可控。</p>
+          </div>
+          <span class="snap-foot">滚动边界</span>
+        </article>
+
+        <article class="snap-item">
+          <span class="snap-index">05 / 05</span>
+          <div>
+            <h4>scroll-padding</h4>
+            <p>为吸附位置留出内边距，避免卡片贴边。</p>
+          </div>
+          <span class="snap-foot">吸附留白</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════════
+       8. 表单
+       ═════════════════════════════════════════════════════════════ -->
+  <section class="section" id="forms">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <span class="kicker">07 — Forms</span>
+        <h2>表单：原生校验的样式化</h2>
+        <p>在输入框里随便填点内容并离开，看看 <code>:user-valid</code> 与 <code>:user-invalid</code> 的效果。</p>
+      </header>
+
+      <form class="form-card reveal" novalidate>
+        <fieldset>
+          <div class="form-grid">
+            <div class="field">
+              <label for="f-name">姓名 <span class="req" aria-hidden="true">*</span></label>
+              <input type="text" id="f-name" name="name" placeholder="张三" required minlength="2">
+              <span class="hint">至少 2 个字符</span>
+            </div>
+
+            <div class="field">
+              <label for="f-email">邮箱 <span class="req" aria-hidden="true">*</span></label>
+              <input type="email" id="f-email" name="email" placeholder="you@example.com" required>
+              <span class="hint">浏览器原生类型校验</span>
+            </div>
+
+            <div class="field">
+              <label for="f-pass">密码 <span class="req" aria-hidden="true">*</span></label>
+              <input type="password" id="f-pass" name="password" placeholder="至少 8 位" required minlength="8">
+              <span class="hint">长度不足时会标红</span>
+            </div>
+
+            <div class="field">
+              <label for="f-role">角色</label>
+              <select id="f-role" name="role">
+                <option value="viewer">只读</option>
+                <option value="editor">编辑</option>
+                <option value="admin">管理员</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="f-range">刷新间隔</label>
+              <div class="field-row">
+                <input type="range" id="f-range" name="interval" min="200" max="3000" step="100" value="1000">
+                <output for="f-range" class="mono text-dim">1000 ms</output>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="f-color">强调色</label>
+              <div class="field-row">
+                <input type="color" id="f-color" name="accent" value="#7c5cff">
+                <span class="hint">accent-color 驱动的控件</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="f-date">生效日期</label>
+              <input type="date" id="f-date" name="date" value="2025-11-04">
+            </div>
+
+            <div class="field">
+              <label for="f-file">附件</label>
+              <input type="file" id="f-file" name="file" accept=".txt,.md,.json">
+              <span class="hint">::file-selector-button 可定制</span>
+            </div>
+
+            <div class="field">
+              <label for="f-search">搜索</label>
+              <input type="search" id="f-search" name="q" placeholder="输入关键词…">
+            </div>
+
+            <div class="field check-field">
+              <input type="checkbox" id="f-check" name="agree" required>
+              <label for="f-check">我已阅读并同意条款</label>
+            </div>
+
+            <div class="field check-field">
+              <input type="radio" id="f-r1" name="level" value="1" checked>
+              <label for="f-r1">基础</label>
+              <input type="radio" id="f-r2" name="level" value="2">
+              <label for="f-r2">进阶</label>
+              <input type="radio" id="f-r3" name="level" value="3">
+              <label for="f-r3">专家</label>
+            </div>
+
+            <div class="field" style="grid-column: 1 / -1">
+              <label for="f-msg">备注</label>
+              <textarea id="f-msg" name="message" placeholder="补充说明…"></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn primary" type="submit">提交</button>
+            <button class="btn secondary" type="reset">重置</button>
+          </div>
+        </fieldset>
+      </form>
+
+      <h3 class="mt-4">dialog —— 内联呈现的模态结构</h3>
+      <div class="dialog-demo reveal">
+        <dialog open>
+          <h4>这是一个带 open 属性的 dialog</h4>
+          <p>
+            由于没有脚本调用 <code>showModal()</code>，它以内联方式渲染，
+            但仍保留 dialog 的语义与伪元素。
+          </p>
+          <div class="dialog-actions">
+            <button class="btn secondary" type="button">取消</button>
+            <button class="btn primary" type="button">确定</button>
+          </div>
+        </dialog>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     页脚
+     ═══════════════════════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>现代 Web 特性图鉴</span>
+    </div>
+
+    <div class="footer-cols">
+      <div class="footer-col">
+        <strong>本页</strong>
+        <a href="#top">回到顶部</a>
+        <a href="#type">排版</a>
+        <a href="#layout">布局</a>
+        <a href="#color">颜色</a>
+      </div>
+
+      <div class="footer-col">
+        <strong>更多</strong>
+        <a href="#interactive">交互</a>
+        <a href="#data">数据</a>
+        <a href="#scroll">滚动</a>
+        <a href="#forms">表单</a>
+      </div>
+
+      <div class="footer-col">
+        <strong>关于</strong>
+        <a href="#top">纯 HTML + CSS</a>
+        <a href="#top">零 JavaScript</a>
+        <a href="#top">零网络请求</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     Popover 浮层
+     ═══════════════════════════════════════════════════════════════ -->
+<div id="about-pop" popover>
+  <h4>关于本页</h4>
+  <p>
+    这一页没有使用一行 JavaScript。所有交互都由原生 HTML 属性和 CSS
+    伪类驱动：<code>:target</code>、<code>:checked</code>、
+    <code>&lt;details&gt;</code>、<code>popover</code>。
+  </p>
+  <p>点击页面任意位置即可关闭此浮层。</p>
+</div>
+
+<div id="pop-info" popover>
+  <h4>原生 popover</h4>
+  <p>
+    使用 <code>popovertarget</code> 属性与目标 id 关联，
+    点击触发按钮即可打开或关闭，无需任何脚本。
+  </p>
+</div>
+
+<div id="pop-help" popover>
+  <h4>它属于顶层（Top Layer）</h4>
+  <p>
+    popover 打开时会被提升到浏览器的顶层，不受父元素的
+    <code>overflow</code> 或 <code>z-index</code> 影响，
+    并通过 <code>::backdrop</code> 提供半透明遮罩。
+  </p>
+</div>
+
+</body>
+</html>

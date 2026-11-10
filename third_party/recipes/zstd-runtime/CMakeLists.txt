@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.20)
+if(NOT EXISTS "${XL_ZSTD_SOURCE}/lib/zstd.h")
+  message(FATAL_ERROR "XL_ZSTD_SOURCE must name the locked Zstandard source")
+endif()
+file(GLOB XL_ZSTD_COMMON CONFIGURE_DEPENDS "${XL_ZSTD_SOURCE}/lib/common/*.c")
+file(GLOB XL_ZSTD_DECOMPRESS CONFIGURE_DEPENDS "${XL_ZSTD_SOURCE}/lib/decompress/*.c")
+add_library(xl_zstd_decoder STATIC ${XL_ZSTD_COMMON} ${XL_ZSTD_DECOMPRESS})
+target_include_directories(xl_zstd_decoder PUBLIC "${XL_ZSTD_SOURCE}/lib")
+target_compile_definitions(xl_zstd_decoder PRIVATE ZSTD_DISABLE_ASM ZSTD_LEGACY_SUPPORT=0
+  ZSTD_MULTITHREAD=0 ZSTDLIB_VISIBILITY= ZSTDLIB_STATIC_API=)
+set_target_properties(xl_zstd_decoder PROPERTIES POSITION_INDEPENDENT_CODE ON C_VISIBILITY_PRESET hidden)

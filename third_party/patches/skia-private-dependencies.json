@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "upstream": "Skia c40d8c9ce6295b8d21a6ad6ef95522729bbadba7",
+  "file": "third_party/third_party.gni",
+  "anchor": "    forward_variables_from(invoker, \"*\", [])\n",
+  "occurrences": 1,
+  "targets": {
+    "zlib": ["zlib"], "libpng": ["libpng", "zlib"], "libjpeg": ["libjpeg-turbo"],
+    "libwebp": ["libwebp"], "freetype2": ["freetype", "libpng", "zlib"],
+    "harfbuzz": ["harfbuzz", "freetype"], "icu": ["icu"]
+  },
+  "description": "After upstream system() defaults, replace dependency includes and libraries with the exact privately built, hash-locked SDK paths. Generated content lives in a per-target source overlay under build. No global system library lookup."
+}

@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "phase": "static EGL/GLES with D3D11 and desktop GL; direct Vulkan is supplied separately by Skia",
+  "gn_args": {
+    "angle_standalone": false,
+    "angle_use_static_angle": true,
+    "angle_enable_commit_id": false,
+    "angle_enable_gl": true,
+    "angle_enable_vulkan": false,
+    "angle_enable_wgpu": false,
+    "angle_enable_null": false,
+    "angle_use_partition_alloc": false,
+    "angle_has_rapidjson": false,
+    "angle_has_frame_capture": false,
+    "angle_enable_abseil": false
+  },
+  "targets": ["libEGL_static", "libGLESv2_static"]
+}

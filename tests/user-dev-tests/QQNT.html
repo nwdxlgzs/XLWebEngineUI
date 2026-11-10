@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QQNT · 网页模拟</title>
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   变量
+   ══════════════════════════════════════════════════════════════════ */
+:root {
+  --qq-blue:        #0099FF;
+  --qq-blue-2:      #12B7F5;
+  --qq-blue-soft:   rgba(0, 153, 255, .12);
+  --qq-blue-hover:  rgba(0, 153, 255, .18);
+
+  --qq-bg:          #F5F5F7;
+  --qq-side:        #EBEBED;
+  --qq-list:        #F7F7F9;
+  --qq-main:        #FFFFFF;
+  --qq-hover:       rgba(0, 0, 0, .045);
+  --qq-active:      rgba(0, 153, 255, .10);
+
+  --qq-text:        #1A1A1C;
+  --qq-text-2:      #5A5A60;
+  --qq-text-3:      #9696A0;
+  --qq-text-4:      #C2C2C8;
+
+  --qq-border:      #E5E5EA;
+  --qq-border-2:    #EFEFF2;
+
+  --qq-red:         #FA5151;
+  --qq-green:       #07C160;
+  --qq-orange:      #FA9D3B;
+
+  --qq-bubble-me:   #D4E9FF;
+  --qq-bubble-you:  #FFFFFF;
+
+  --qq-radius:      10px;
+  --qq-radius-s:    6px;
+
+  --qq-shadow:
+    0 0 0 1px rgba(0, 0, 0, .06),
+    0 20px 50px -10px rgba(20, 30, 50, .22),
+    0 8px 24px -8px rgba(20, 30, 50, .15);
+
+  --qq-font: -apple-system, BlinkMacSystemFont, "PingFang SC",
+             "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI",
+             "Helvetica Neue", Arial, sans-serif;
+
+  --qq-mono: ui-monospace, "SF Mono", Consolas, "Cascadia Code",
+             "Liberation Mono", monospace;
+}
+
+/* 深色模式：由设置面板里的复选框驱动 */
+:root:has(#dark-mode:checked) {
+  --qq-bg:          #1C1C1F;
+  --qq-side:        #232327;
+  --qq-list:        #27272B;
+  --qq-main:        #1F1F23;
+  --qq-hover:       rgba(255, 255, 255, .06);
+  --qq-active:      rgba(0, 153, 255, .18);
+
+  --qq-text:        #E8E8EC;
+  --qq-text-2:      #A5A5AE;
+  --qq-text-3:      #73737E;
+  --qq-text-4:      #4E4E58;
+
+  --qq-border:      #33333A;
+  --qq-border-2:    #2C2C32;
+
+  --qq-bubble-me:   #1A4E7C;
+  --qq-bubble-you:  #2C2C32;
+
+  --qq-shadow:
+    0 0 0 1px rgba(255, 255, 255, .04),
+    0 20px 50px -10px rgba(0, 0, 0, .65),
+    0 8px 24px -8px rgba(0, 0, 0, .5);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Reset
+   ══════════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+body {
+  font-family: var(--qq-font);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--qq-text);
+  background:
+    radial-gradient(1200px 600px at 20% 0%, rgba(0, 153, 255, .10), transparent 60%),
+    radial-gradient(1000px 500px at 80% 100%, rgba(140, 90, 255, .10), transparent 60%),
+    #E2E6EC;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  transition: background .4s;
+}
+
+:root:has(#dark-mode:checked) body {
+  background:
+    radial-gradient(1200px 600px at 20% 0%, rgba(0, 153, 255, .12), transparent 60%),
+    radial-gradient(1000px 500px at 80% 100%, rgba(140, 90, 255, .12), transparent 60%),
+    #0E0E11;
+}
+
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+input, textarea { font: inherit; color: inherit; }
+svg { display: block; }
+label { cursor: pointer; }
+
+.vh {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   窗口
+   ══════════════════════════════════════════════════════════════════ */
+.qq {
+  width: min(1220px, 96vw);
+  height: min(780px, 92vh);
+  display: flex;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--qq-bg);
+  box-shadow: var(--qq-shadow);
+  position: relative;
+  transition: background .3s;
+}
+
+/* 窗口右上角装饰圆点 */
+.qq::after {
+  content: "";
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 54px;
+  height: 12px;
+  background:
+    radial-gradient(circle at 6px 6px,  #FF5F57 5px, transparent 6px),
+    radial-gradient(circle at 26px 6px, #FEBC2E 5px, transparent 6px),
+    radial-gradient(circle at 46px 6px, #28C840 5px, transparent 6px);
+  pointer-events: none;
+  opacity: .9;
+  z-index: 100;
+}
+
+@media (max-width: 900px) {
+  body { overflow: auto; }
+  .qq {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .qq::after { display: none; }
+  .qq-list { width: 220px !important; }
+  .qq-side { width: 56px !important; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   侧边栏
+   ══════════════════════════════════════════════════════════════════ */
+.qq-side {
+  width: 64px;
+  flex-shrink: 0;
+  background: var(--qq-side);
+  border-right: 1px solid var(--qq-border-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0 12px;
+  transition: background .3s;
+}
+
+.side-profile {
+  position: relative;
+  margin-bottom: 14px;
+}
+
+.side-profile .avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 15px;
+  border: 2px solid rgba(255,255,255,.5);
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+
+.status-dot {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--qq-green);
+  border: 2px solid var(--qq-side);
+}
+
+.side-nav,
+.side-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  width: 100%;
+}
+
+.side-bottom { margin-top: auto; }
+
+.side-btn {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: var(--qq-text-3);
+  transition: color .18s, background .18s, transform .15s;
+}
+
+.side-btn svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.side-btn:hover {
+  color: var(--qq-text);
+  background: var(--qq-hover);
+}
+
+.side-btn:active { transform: scale(.94); }
+
+/* 当前导航高亮 */
+#nav-msg:checked      ~ .qq .side-btn[for="nav-msg"],
+#nav-contacts:checked ~ .qq .side-btn[for="nav-contacts"],
+#nav-groups:checked   ~ .qq .side-btn[for="nav-groups"],
+#nav-settings:checked ~ .qq .side-btn[for="nav-settings"] {
+  color: var(--qq-blue);
+  background: var(--qq-blue-soft);
+}
+
+/* 未读角标 */
+.side-badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--qq-red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--qq-side);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   列表栏
+   ══════════════════════════════════════════════════════════════════ */
+.qq-list {
+  width: 300px;
+  flex-shrink: 0;
+  background: var(--qq-list);
+  border-right: 1px solid var(--qq-border-2);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  transition: background .3s;
+}
+
+.list-panel {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+#nav-msg:checked      ~ .qq .list-panel[data-panel="msg"]      { display: flex; }
+#nav-contacts:checked ~ .qq .list-panel[data-panel="contacts"] { display: flex; }
+#nav-groups:checked   ~ .qq .list-panel[data-panel="groups"]   { display: flex; }
+#nav-settings:checked ~ .qq .list-panel[data-panel="settings"] { display: flex; }
+
+/* 列表搜索 */
+.list-search {
+  padding: 14px 12px 8px;
+  flex-shrink: 0;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: var(--qq-hover);
+  color: var(--qq-text-3);
+  font-size: 12.5px;
+  transition: background .18s;
+}
+
+.search-box:hover { background: rgba(0, 153, 255, .08); }
+
+.search-box svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
+.search-box input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--qq-text);
+  font-size: 12.5px;
+}
+
+.search-box input::placeholder { color: var(--qq-text-3); }
+
+/* 列表滚动区 */
+.list-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 8px 12px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--qq-text-4) transparent;
+}
+
+.list-scroll::-webkit-scrollbar { width: 6px; }
+.list-scroll::-webkit-scrollbar-thumb {
+  background: var(--qq-text-4);
+  border-radius: 6px;
+  opacity: .5;
+}
+.list-scroll::-webkit-scrollbar-track { background: transparent; }
+
+/* 分组标签 */
+.group-label {
+  padding: 10px 8px 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: var(--qq-text-3);
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   会话项
+   ══════════════════════════════════════════════════════════════════ */
+.conv {
+  display: flex;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  position: relative;
+  transition: background .15s;
+  align-items: center;
+}
+
+.conv:hover { background: var(--qq-hover); }
+
+/* 选中高亮 */
+#chat-zhang:checked  ~ .qq .conv[for="chat-zhang"],
+#chat-li:checked     ~ .qq .conv[for="chat-li"],
+#chat-group1:checked ~ .qq .conv[for="chat-group1"],
+#chat-group2:checked ~ .qq .conv[for="chat-group2"],
+#chat-wang:checked   ~ .qq .conv[for="chat-wang"],
+#chat-family:checked ~ .qq .conv[for="chat-family"] {
+  background: var(--qq-blue-soft);
+}
+
+.conv .avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+/* 群聊头像用圆角方 */
+.conv[for="chat-group1"] .avatar,
+.conv[for="chat-group2"] .avatar,
+.conv[for="chat-family"] .avatar {
+  border-radius: 10px;
+}
+
+.conv-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.conv-top,
+.conv-bottom {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.conv-top {
+  justify-content: space-between;
+}
+
+.conv-name {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--qq-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conv-time {
+  font-size: 11px;
+  color: var(--qq-text-3);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.conv-preview {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--qq-text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--qq-red);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.badge.dot {
+  min-width: 8px;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   主区
+   ══════════════════════════════════════════════════════════════════ */
+.qq-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--qq-main);
+  min-height: 0;
+  transition: background .3s;
+}
+
+/* 聊天区：仅消息模式显示 */
+.main-chat {
+  display: none;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
+
+#nav-msg:checked ~ .qq .main-chat { display: flex; }
+
+/* 空态：联系人、群聊、设置 */
+.main-empty {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 40px;
+  background: var(--qq-main);
+  color: var(--qq-text-3);
+}
+
+#nav-contacts:checked ~ .qq .main-empty[data-empty="contacts"],
+#nav-groups:checked   ~ .qq .main-empty[data-empty="groups"],
+#nav-settings:checked ~ .qq .main-empty[data-empty="settings"] {
+  display: flex;
+}
+
+.empty-icon {
+  font-size: 56px;
+  opacity: .35;
+  line-height: 1;
+}
+
+.empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--qq-text-2);
+}
+
+.empty-sub {
+  font-size: 13px;
+  color: var(--qq-text-3);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   聊天视图
+   ══════════════════════════════════════════════════════════════════ */
+.chat-view {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+#chat-zhang:checked  ~ .qq .chat-view[data-chat="zhang"],
+#chat-li:checked     ~ .qq .chat-view[data-chat="li"],
+#chat-group1:checked ~ .qq .chat-view[data-chat="group1"],
+#chat-group2:checked ~ .qq .chat-view[data-chat="group2"],
+#chat-wang:checked   ~ .qq .chat-view[data-chat="wang"],
+#chat-family:checked ~ .qq .chat-view[data-chat="family"],
+#chat-none:checked   ~ .qq .chat-view[data-chat="none"] {
+  display: flex;
+}
+
+/* 聊天标题 */
+.chat-head {
+  height: 58px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 22px;
+  border-bottom: 1px solid var(--qq-border);
+}
+
+.chat-title-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-title {
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--qq-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-sub {
+  font-size: 11.5px;
+  color: var(--qq-text-3);
+  margin-top: 1px;
+}
+
+.chat-sub::before {
+  content: "●";
+  color: var(--qq-green);
+  font-size: 9px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.chat-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.chat-action {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  font-size: 16px;
+  color: var(--qq-text-3);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+
+.chat-action:hover {
+  background: var(--qq-hover);
+  color: var(--qq-text);
+}
+
+/* 消息流 */
+.messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 24px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--qq-main);
+  scrollbar-width: thin;
+  scrollbar-color: var(--qq-text-4) transparent;
+}
+
+.messages::-webkit-scrollbar { width: 6px; }
+.messages::-webkit-scrollbar-thumb {
+  background: var(--qq-text-4);
+  border-radius: 6px;
+}
+.messages::-webkit-scrollbar-track { background: transparent; }
+
+.time-divider {
+  text-align: center;
+  font-size: 11px;
+  color: var(--qq-text-3);
+  margin: 4px 0 2px;
+}
+
+/* 消息行 */
+.msg {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  max-width: 100%;
+}
+
+.msg.me { flex-direction: row-reverse; }
+
+.msg .avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.msg-body {
+  max-width: min(70%, 560px);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.msg.me .msg-body { align-items: flex-end; }
+
+.msg-name {
+  font-size: 11.5px;
+  color: var(--qq-text-3);
+  padding: 0 2px;
+}
+
+.bubble {
+  position: relative;
+  padding: 9px 13px;
+  border-radius: 10px;
+  background: var(--qq-bubble-you);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--qq-text);
+  word-wrap: break-word;
+  word-break: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+  border: 1px solid var(--qq-border-2);
+}
+
+.bubble::before {
+  content: "";
+  position: absolute;
+  top: 11px;
+  left: -5px;
+  width: 10px;
+  height: 10px;
+  background: inherit;
+  border-left: 1px solid var(--qq-border-2);
+  border-bottom: 1px solid var(--qq-border-2);
+  transform: rotate(45deg);
+  border-radius: 0 0 0 2px;
+}
+
+.msg.me .bubble {
+  background: var(--qq-bubble-me);
+  border-color: transparent;
+}
+
+.msg.me .bubble::before {
+  left: auto;
+  right: -5px;
+  background: var(--qq-bubble-me);
+  border: none;
+  border-right: 1px solid transparent;
+  border-top: 1px solid transparent;
+  border-radius: 0 2px 0 0;
+  box-shadow: none;
+}
+
+/* 语音消息 */
+.bubble.voice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 96px;
+  padding: 8px 12px;
+}
+
+.voice-waves {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 14px;
+}
+
+.voice-waves i {
+  width: 2.5px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: .55;
+}
+
+.voice-waves i:nth-child(1) { height: 5px; }
+.voice-waves i:nth-child(2) { height: 10px; }
+.voice-waves i:nth-child(3) { height: 14px; }
+.voice-waves i:nth-child(4) { height: 8px; }
+.voice-waves i:nth-child(5) { height: 4px; }
+
+.voice-dur {
+  font-size: 12px;
+  color: var(--qq-text-2);
+  margin-left: auto;
+}
+
+/* 图片消息 */
+.bubble.img {
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: hidden;
+  border-radius: 8px;
+  width: 180px;
+  height: 130px;
+}
+
+.bubble.img::before { display: none; }
+
+.img-fill {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: rgba(255,255,255,.92);
+  font-size: 12px;
+  letter-spacing: .06em;
+  background: linear-gradient(135deg, #6AB8FF, #A78BFA);
+}
+
+/* 文件消息 */
+.bubble.file {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  min-width: 220px;
+}
+
+.file-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #4DD6A0, #2DA0FF);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.file-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.file-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--qq-text);
+}
+
+.file-size {
+  font-size: 11px;
+  color: var(--qq-text-3);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   输入区
+   ══════════════════════════════════════════════════════════════════ */
+.composer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--qq-border);
+  background: var(--qq-main);
+  padding: 10px 20px 14px;
+}
+
+.composer-tools {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.tool-btn {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  font-size: 15px;
+  color: var(--qq-text-3);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+
+.tool-btn:hover {
+  background: var(--qq-hover);
+  color: var(--qq-text);
+}
+
+.composer-input {
+  width: 100%;
+  min-height: 56px;
+  max-height: 160px;
+  padding: 8px 2px;
+  border: none;
+  outline: none;
+  resize: none;
+  background: transparent;
+  color: var(--qq-text);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.composer-input::placeholder { color: var(--qq-text-3); }
+
+.composer-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.composer-hint {
+  font-size: 11px;
+  color: var(--qq-text-3);
+  font-family: var(--qq-mono);
+}
+
+.composer-hint kbd {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--qq-hover);
+  border: 1px solid var(--qq-border);
+  font-size: 10.5px;
+  color: var(--qq-text-2);
+}
+
+.send-btn {
+  margin-left: auto;
+  height: 30px;
+  padding: 0 20px;
+  border-radius: 6px;
+  background: var(--qq-blue);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background .15s, transform .12s;
+}
+
+.send-btn:hover { background: #0088E6; }
+.send-btn:active { transform: scale(.97); }
+
+/* ══════════════════════════════════════════════════════════════════
+   头像
+   ══════════════════════════════════════════════════════════════════ */
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+  letter-spacing: -.02em;
+  user-select: none;
+  text-shadow: 0 1px 1px rgba(0,0,0,.1);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   联系人列表项
+   ══════════════════════════════════════════════════════════════════ */
+.contact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  transition: background .15s;
+  cursor: default;
+}
+
+.contact:hover { background: var(--qq-hover); }
+
+.contact .avatar {
+  width: 34px;
+  height: 34px;
+  font-size: 13px;
+}
+
+.contact-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  color: var(--qq-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contact-status {
+  font-size: 11px;
+  color: var(--qq-text-3);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   群组项
+   ══════════════════════════════════════════════════════════════════ */
+.group-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  transition: background .15s;
+  cursor: default;
+}
+
+.group-item:hover { background: var(--qq-hover); }
+
+.group-item .avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.group-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.group-name {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--qq-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.group-meta {
+  font-size: 11.5px;
+  color: var(--qq-text-3);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   设置面板
+   ══════════════════════════════════════════════════════════════════ */
+.setting-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 10px;
+  border-radius: 8px;
+  transition: background .15s;
+}
+
+.setting-item:hover { background: var(--qq-hover); }
+
+.setting-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  color: var(--qq-text);
+}
+
+.setting-desc {
+  font-size: 11.5px;
+  color: var(--qq-text-3);
+  margin-top: 1px;
+}
+
+/* 开关 */
+.switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-track {
+  position: absolute;
+  inset: 0;
+  background: var(--qq-text-4);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .22s;
+}
+
+.switch-track::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  left: 2px;
+  top: 2px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform .22s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+
+.switch input:checked + .switch-track {
+  background: var(--qq-blue);
+}
+
+.switch input:checked + .switch-track::before {
+  transform: translateX(16px);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   空态：消息区
+   ══════════════════════════════════════════════════════════════════ */
+.chat-view[data-chat="none"] {
+  align-items: center;
+  justify-content: center;
+  color: var(--qq-text-3);
+  gap: 12px;
+}
+
+.chat-view[data-chat="none"]::before {
+  content: "💬";
+  font-size: 56px;
+  opacity: .25;
+  line-height: 1;
+}
+
+.chat-view[data-chat="none"]::after {
+  content: "选择一个会话开始聊天";
+  font-size: 13.5px;
+  color: var(--qq-text-3);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   响应式细节
+   ══════════════════════════════════════════════════════════════════ */
+@media (max-width: 1100px) {
+  .qq-list { width: 260px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     状态控件
+     ═══════════════════════════════════════════════════════════════ -->
+<!-- 深色模式 -->
+<input type="checkbox" id="dark-mode" class="vh">
+
+<!-- 主导航 -->
+<input type="radio" name="nav" id="nav-msg"      class="vh" checked>
+<input type="radio" name="nav" id="nav-contacts" class="vh">
+<input type="radio" name="nav" id="nav-groups"   class="vh">
+<input type="radio" name="nav" id="nav-settings" class="vh">
+
+<!-- 当前会话 -->
+<input type="radio" name="chat" id="chat-none"   class="vh" checked>
+<input type="radio" name="chat" id="chat-zhang"  class="vh">
+<input type="radio" name="chat" id="chat-li"     class="vh">
+<input type="radio" name="chat" id="chat-group1" class="vh">
+<input type="radio" name="chat" id="chat-group2" class="vh">
+<input type="radio" name="chat" id="chat-wang"   class="vh">
+<input type="radio" name="chat" id="chat-family" class="vh">
+
+<!-- ═══════════════════════════════════════════════════════════════
+     主窗口
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="qq">
+
+  <!-- ───────────── 侧边栏 ───────────── -->
+  <aside class="qq-side">
+    <div class="side-profile">
+      <div class="avatar" style="background:linear-gradient(135deg,#12B7F5,#0099FF)">我</div>
+      <span class="status-dot" aria-hidden="true"></span>
+    </div>
+
+    <nav class="side-nav" aria-label="主导航">
+      <label class="side-btn" for="nav-msg" title="消息">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+        </svg>
+        <span class="side-badge">5</span>
+      </label>
+
+      <label class="side-btn" for="nav-contacts" title="联系人">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </label>
+
+      <label class="side-btn" for="nav-groups" title="群聊">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </label>
+    </nav>
+
+    <div class="side-bottom">
+      <label class="side-btn" for="nav-settings" title="设置">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </label>
+    </div>
+  </aside>
+
+  <!-- ───────────── 列表栏 ───────────── -->
+  <aside class="qq-list">
+
+    <!-- 消息面板 -->
+    <div class="list-panel" data-panel="msg">
+      <div class="list-search">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="search" placeholder="搜索消息、联系人" aria-label="搜索">
+        </div>
+      </div>
+
+      <div class="list-scroll">
+
+        <label class="conv" for="chat-zhang">
+          <div class="avatar" style="background:linear-gradient(135deg,#FF8C5A,#FF5A8C)">张</div>
+          <div class="conv-info">
+            <div class="conv-top">
+              <span class="conv-name">张三</span>
+              <span class="conv-time">14:32</span>
+            </div>
+            <div class="conv-bottom">
+              <span class="conv-preview">明天下午的会改到 3 点，可以吗？</span>
+              <span class="badge">2</span>
+            </div>
+          </div>
+        </label>
+
+        <label class="conv" for="chat-li">
+          <div class="avatar" style="background:linear-gradient(135deg,#6B9DFF,#4A72E8)">李</div>
+          <div class="conv-info">
+            <div class="conv-top">
+              <span class="conv-name">李四</span>
+              <span class="conv-time">12:15</span>
+            </div>
+            <div class="conv-bottom">
+              <span class="conv-preview">[文件] 设计稿_v2.fig</span>
+            </div>
+          </div>
+        </label>
+
+        <label class="conv" for="chat-group1">
+          <div class="avatar" style="background:linear-gradient(135deg,#4DD6A0,#2DA0FF)">群</div>
+          <div class="conv-info">
+            <div class="conv-top">
+              <span class="conv-name">产品设计群</span>
+              <span class="conv-time">11:48</span>
+            </div>
+            <div class="conv-bottom">
+              <span class="conv-preview">王五：这个需求下周上线</span>
+              <span class="badge">99+</span>
+            </div>
+          </div>
+        </label>
+
+        <label class="conv" for="chat-group2">
+          <div class="avatar" style="background:linear-gradient(135deg,#A78BFA,#7C3AED)">技</div>
+          <div class="conv-info">
+            <div class="conv-top">
+              <span class="conv-name">技术交流群</span>
+              <span class="conv-time">10:30</span>
+            </div>
+            <div class="conv-bottom">
+              <span class="conv-preview">陈晨：这个 bug 谁看下</span>
+              <span class="badge">5</span>
+            </div>
+          </div>
+        </label>
+
+        <label class="conv" for="chat-wang">
+          <div class="avatar" style="background:linear-gradient(135deg,#FFB84D,#FF6B6B)">王</div>
+          <div class="conv-info">
+            <div class="conv-top">
+              <span class="conv-name">王小明</span>
+              <span class="conv-time">昨天</span>
+            </div>
+            <div class="conv-bottom">
+              <span class="conv-preview">生日快乐！</span>
+            </div>
+          </div>
+        </label>
+
+        <label class="conv" for="chat-none">
+          <div class="avatar" style="background:linear-gradient(135deg,#B0BEC5,#78909C)">📁</div>
+          <div class="conv-info">
+            <div class="conv-top">
+              <span class="conv-name">文件传输助手</span>
+              <span class="conv-time">昨天</span>
+            </div>
+            <div class="conv-bottom">
+              <span class="conv-preview">[图片]</span>
+            </div>
+          </div>
+        </label>
+
+        <label class="conv" for="chat-family">
+          <div class="avatar" style="background:linear-gradient(135deg,#FF8C5A,#FF5A8C)">家</div>
+          <div class="conv-info">
+            <div class="conv-top">
+              <span class="conv-name">家人群</span>
+              <span class="conv-time">周一</span>
+            </div>
+            <div class="conv-bottom">
+              <span class="conv-preview">妈妈：晚上回来吃饭吗</span>
+              <span class="badge dot"></span>
+            </div>
+          </div>
+        </label>
+
+        <label class="conv" for="chat-none">
+          <div class="avatar" style="background:linear-gradient(135deg,#52C41A,#07C160)">空</div>
+          <div class="conv-info">
+            <div class="conv-top">
+              <span class="conv-name">QQ 空间</span>
+              <span class="conv-time">周一</span>
+            </div>
+            <div class="conv-bottom">
+              <span class="conv-preview">你的好友更新了动态</span>
+            </div>
+          </div>
+        </label>
+
+      </div>
+    </div>
+
+    <!-- 联系人面板 -->
+    <div class="list-panel" data-panel="contacts">
+      <div class="list-search">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="search" placeholder="搜索联系人" aria-label="搜索联系人">
+        </div>
+      </div>
+
+      <div class="list-scroll">
+        <div class="group-label">我的好友 · 12</div>
+
+        <div class="contact">
+          <div class="avatar" style="background:linear-gradient(135deg,#FF8C5A,#FF5A8C)">张</div>
+          <span class="contact-name">张三</span>
+          <span class="contact-status">在线</span>
+        </div>
+        <div class="contact">
+          <div class="avatar" style="background:linear-gradient(135deg,#6B9DFF,#4A72E8)">李</div>
+          <span class="contact-name">李四</span>
+          <span class="contact-status">离开</span>
+        </div>
+        <div class="contact">
+          <div class="avatar" style="background:linear-gradient(135deg,#FFB84D,#FF6B6B)">王</div>
+          <span class="contact-name">王小明</span>
+          <span class="contact-status">在线</span>
+        </div>
+        <div class="contact">
+          <div class="avatar" style="background:linear-gradient(135deg,#A78BFA,#7C3AED)">王</div>
+          <span class="contact-name">王五</span>
+          <span class="contact-status">忙碌</span>
+        </div>
+        <div class="contact">
+          <div class="avatar" style="background:linear-gradient(135deg,#4DD6A0,#2DA0FF)">陈</div>
+          <span class="contact-name">陈晨</span>
+          <span class="contact-status">在线</span>
+        </div>
+
+        <div class="group-label">同事 · 28</div>
+
+        <div class="contact">
+          <div class="avatar" style="background:linear-gradient(135deg,#52C41A,#07C160)">赵</div>
+          <span class="contact-name">赵六</span>
+          <span class="contact-status">在线</span>
+        </div>
+        <div class="contact">
+          <div class="avatar" style="background:linear-gradient(135deg,#10AEFF,#0099FF)">刘</div>
+          <span class="contact-name">刘一</span>
+          <span class="contact-status">离开</span>
+        </div>
+
+        <div class="group-label">家人 · 4</div>
+
+        <div class="contact">
+          <div class="avatar" style="background:linear-gradient(135deg,#FF8C5A,#FF5A8C)">妈</div>
+          <span class="contact-name">妈妈</span>
+          <span class="contact-status">在线</span>
+        </div>
+        <div class="contact">
+          <div class="avatar" style="background:linear-gradient(135deg,#78909C,#4A5A66)">爸</div>
+          <span class="contact-name">爸爸</span>
+          <span class="contact-status">离线</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 群聊面板 -->
+    <div class="list-panel" data-panel="groups">
+      <div class="list-search">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="search" placeholder="搜索群聊" aria-label="搜索群聊">
+        </div>
+      </div>
+
+      <div class="list-scroll">
+        <div class="group-label">我创建的 · 2</div>
+
+        <div class="group-item">
+          <div class="avatar" style="background:linear-gradient(135deg,#4DD6A0,#2DA0FF)">群</div>
+          <div class="group-info">
+            <div class="group-name">产品设计群</div>
+            <div class="group-meta">8 人 · 3 条未读</div>
+          </div>
+        </div>
+
+        <div class="group-item">
+          <div class="avatar" style="background:linear-gradient(135deg,#A78BFA,#7C3AED)">技</div>
+          <div class="group-info">
+            <div class="group-name">技术交流群</div>
+            <div class="group-meta">42 人 · 12 条未读</div>
+          </div>
+        </div>
+
+        <div class="group-label">我加入的 · 5</div>
+
+        <div class="group-item">
+          <div class="avatar" style="background:linear-gradient(135deg,#FF8C5A,#FF5A8C)">家</div>
+          <div class="group-info">
+            <div class="group-name">家人群</div>
+            <div class="group-meta">4 人 · 1 条未读</div>
+          </div>
+        </div>
+
+        <div class="group-item">
+          <div class="avatar" style="background:linear-gradient(135deg,#10AEFF,#0099FF)">前</div>
+          <div class="group-info">
+            <div class="group-name">前端技术组</div>
+            <div class="group-meta">16 人</div>
+          </div>
+        </div>
+
+        <div class="group-item">
+          <div class="avatar" style="background:linear-gradient(135deg,#FFB84D,#FF6B6B)">周</div>
+          <div class="group-info">
+            <div class="group-name">周末羽毛球</div>
+            <div class="group-meta">23 人 · 2 条未读</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 设置面板 -->
+    <div class="list-panel" data-panel="settings">
+      <div class="list-search">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="search" placeholder="搜索设置" aria-label="搜索设置">
+        </div>
+      </div>
+
+      <div class="list-scroll">
+        <div class="group-label">外观</div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            深色模式
+            <div class="setting-desc">使用深色主题</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="dark-mode-sync">
+            <span class="switch-track"></span>
+          </label>
+        </div>
+
+        <div class="group-label">消息</div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            消息通知
+            <div class="setting-desc">接收新消息提醒</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="switch-track"></span>
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            声音提示
+            <div class="setting-desc">新消息播放提示音</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="switch-track"></span>
+          </label>
+        </div>
+
+        <div class="group-label">通用</div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            开机自启
+            <div class="setting-desc">系统启动时自动运行</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox">
+            <span class="switch-track"></span>
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            自动更新
+            <div class="setting-desc">自动下载并安装新版本</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="switch-track"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ───────────── 主区 ───────────── -->
+  <main class="qq-main">
+
+    <!-- 消息模式的聊天区 -->
+    <div class="main-chat">
+
+      <!-- 空态：未选择会话 -->
+      <div class="chat-view" data-chat="none"></div>
+
+      <!-- 张三 -->
+      <div class="chat-view" data-chat="zhang">
+        <header class="chat-head">
+          <div class="chat-title-wrap">
+            <div class="chat-title">张三</div>
+            <div class="chat-sub">在线</div>
+          </div>
+          <div class="chat-actions">
+            <span class="chat-action" title="语音通话">📞</span>
+            <span class="chat-action" title="视频通话">📹</span>
+            <span class="chat-action" title="更多">⋯</span>
+          </div>
+        </header>
+
+        <div class="messages">
+          <div class="time-divider">今天 14:28</div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#FF8C5A,#FF5A8C)">张</div>
+            <div class="msg-body">
+              <span class="msg-name">张三</span>
+              <div class="bubble">明天下午的会改到 3 点，可以吗？</div>
+            </div>
+          </div>
+
+          <div class="msg me">
+            <div class="avatar" style="background:linear-gradient(135deg,#12B7F5,#0099FF)">我</div>
+            <div class="msg-body">
+              <div class="bubble">可以的</div>
+            </div>
+          </div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#FF8C5A,#FF5A8C)">张</div>
+            <div class="msg-body">
+              <div class="bubble">那我把会议链接发你</div>
+            </div>
+          </div>
+
+          <div class="msg me">
+            <div class="avatar" style="background:linear-gradient(135deg,#12B7F5,#0099FF)">我</div>
+            <div class="msg-body">
+              <div class="bubble">好的，谢谢</div>
+            </div>
+          </div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#FF8C5A,#FF5A8C)">张</div>
+            <div class="msg-body">
+              <div class="bubble voice">
+                <span class="voice-waves" aria-hidden="true">
+                  <i></i><i></i><i></i><i></i><i></i>
+                </span>
+                <span class="voice-dur">8"</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="msg me">
+            <div class="avatar" style="background:linear-gradient(135deg,#12B7F5,#0099FF)">我</div>
+            <div class="msg-body">
+              <div class="bubble">👌</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="composer">
+          <div class="composer-tools">
+            <span class="tool-btn" title="表情">😊</span>
+            <span class="tool-btn" title="图片">🖼</span>
+            <span class="tool-btn" title="文件">📎</span>
+            <span class="tool-btn" title="截图">✂</span>
+          </div>
+          <textarea class="composer-input" placeholder="输入消息…" aria-label="消息输入"></textarea>
+          <div class="composer-foot">
+            <span class="composer-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> 发送</span>
+            <button class="send-btn" type="button">发送</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 李四 -->
+      <div class="chat-view" data-chat="li">
+        <header class="chat-head">
+          <div class="chat-title-wrap">
+            <div class="chat-title">李四</div>
+            <div class="chat-sub">离开</div>
+          </div>
+          <div class="chat-actions">
+            <span class="chat-action" title="语音通话">📞</span>
+            <span class="chat-action" title="视频通话">📹</span>
+            <span class="chat-action" title="更多">⋯</span>
+          </div>
+        </header>
+
+        <div class="messages">
+          <div class="time-divider">今天 12:10</div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#6B9DFF,#4A72E8)">李</div>
+            <div class="msg-body">
+              <span class="msg-name">李四</span>
+              <div class="bubble">文件发你了，看一下</div>
+            </div>
+          </div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#6B9DFF,#4A72E8)">李</div>
+            <div class="msg-body">
+              <div class="bubble file">
+                <div class="file-icon">FIG</div>
+                <div class="file-meta">
+                  <span class="file-name">设计稿_v2.fig</span>
+                  <span class="file-size">12.4 MB</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#6B9DFF,#4A72E8)">李</div>
+            <div class="msg-body">
+              <div class="bubble img">
+                <div class="img-fill">预览 · 01</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="msg me">
+            <div class="avatar" style="background:linear-gradient(135deg,#12B7F5,#0099FF)">我</div>
+            <div class="msg-body">
+              <div class="bubble">收到，这就看</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="composer">
+          <div class="composer-tools">
+            <span class="tool-btn" title="表情">😊</span>
+            <span class="tool-btn" title="图片">🖼</span>
+            <span class="tool-btn" title="文件">📎</span>
+            <span class="tool-btn" title="截图">✂</span>
+          </div>
+          <textarea class="composer-input" placeholder="输入消息…" aria-label="消息输入"></textarea>
+          <div class="composer-foot">
+            <span class="composer-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> 发送</span>
+            <button class="send-btn" type="button">发送</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 产品设计群 -->
+      <div class="chat-view" data-chat="group1">
+        <header class="chat-head">
+          <div class="chat-title-wrap">
+            <div class="chat-title">产品设计群 <span style="font-size:12px;color:var(--qq-text-3);font-weight:400;">(8)</span></div>
+            <div class="chat-sub">8 人在线</div>
+          </div>
+          <div class="chat-actions">
+            <span class="chat-action" title="语音通话">📞</span>
+            <span class="chat-action" title="视频通话">📹</span>
+            <span class="chat-action" title="更多">⋯</span>
+          </div>
+        </header>
+
+        <div class="messages">
+          <div class="time-divider">今天 11:46</div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#A78BFA,#7C3AED)">王</div>
+            <div class="msg-body">
+              <span class="msg-name">王五</span>
+              <div class="bubble">这个需求下周上线，大家排一下</div>
+            </div>
+          </div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#4DD6A0,#2DA0FF)">陈</div>
+            <div class="msg-body">
+              <span class="msg-name">陈晨</span>
+              <div class="bubble">收到</div>
+            </div>
+          </div>
+
+          <div class="msg me">
+            <div class="avatar" style="background:linear-gradient(135deg,#12B7F5,#0099FF)">我</div>
+            <div class="msg-body">
+              <div class="bubble">好，我下午出个方案</div>
+            </div>
+          </div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#52C41A,#07C160)">赵</div>
+            <div class="msg-body">
+              <span class="msg-name">赵六</span>
+              <div class="bubble">方案记得同步到文档</div>
+            </div>
+          </div>
+
+          <div class="msg me">
+            <div class="avatar" style="background:linear-gradient(135deg,#12B7F5,#0099FF)">我</div>
+            <div class="msg-body">
+              <div class="bubble">👌</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="composer">
+          <div class="composer-tools">
+            <span class="tool-btn" title="表情">😊</span>
+            <span class="tool-btn" title="图片">🖼</span>
+            <span class="tool-btn" title="文件">📎</span>
+            <span class="tool-btn" title="截图">✂</span>
+          </div>
+          <textarea class="composer-input" placeholder="输入消息…" aria-label="消息输入"></textarea>
+          <div class="composer-foot">
+            <span class="composer-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> 发送</span>
+            <button class="send-btn" type="button">发送</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 技术交流群 -->
+      <div class="chat-view" data-chat="group2">
+        <header class="chat-head">
+          <div class="chat-title-wrap">
+            <div class="chat-title">技术交流群 <span style="font-size:12px;color:var(--qq-text-3);font-weight:400;">(42)</span></div>
+            <div class="chat-sub">42 人在线</div>
+          </div>
+          <div class="chat-actions">
+            <span class="chat-action" title="语音通话">📞</span>
+            <span class="chat-action" title="视频通话">📹</span>
+            <span class="chat-action" title="更多">⋯</span>
+          </div>
+        </header>
+
+        <div class="messages">
+          <div class="time-divider">今天 10:30</div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#4DD6A0,#2DA0FF)">陈</div>
+            <div class="msg-body">
+              <span class="msg-name">陈晨</span>
+              <div class="bubble">这个 bug 谁看下</div>
+            </div>
+          </div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#4DD6A0,#2DA0FF)">陈</div>
+            <div class="msg-body">
+              <div class="bubble img">
+                <div class="img-fill">截图 · error.log</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="msg me">
+            <div class="avatar" style="background:linear-gradient(135deg,#12B7F5,#0099FF)">我</div>
+            <div class="msg-body">
+              <div class="bubble">我看看</div>
+            </div>
+          </div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#10AEFF,#0099FF)">刘</div>
+            <div class="msg-body">
+              <span class="msg-name">刘一</span>
+              <div class="bubble">应该是异步的问题</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="composer">
+          <div class="composer-tools">
+            <span class="tool-btn" title="表情">😊</span>
+            <span class="tool-btn" title="图片">🖼</span>
+            <span class="tool-btn" title="文件">📎</span>
+            <span class="tool-btn" title="截图">✂</span>
+          </div>
+          <textarea class="composer-input" placeholder="输入消息…" aria-label="消息输入"></textarea>
+          <div class="composer-foot">
+            <span class="composer-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> 发送</span>
+            <button class="send-btn" type="button">发送</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 王小明 -->
+      <div class="chat-view" data-chat="wang">
+        <header class="chat-head">
+          <div class="chat-title-wrap">
+            <div class="chat-title">王小明</div>
+            <div class="chat-sub">在线</div>
+          </div>
+          <div class="chat-actions">
+            <span class="chat-action" title="语音通话">📞</span>
+            <span class="chat-action" title="视频通话">📹</span>
+            <span class="chat-action" title="更多">⋯</span>
+          </div>
+        </header>
+
+        <div class="messages">
+          <div class="time-divider">昨天 21:08</div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#FFB84D,#FF6B6B)">王</div>
+            <div class="msg-body">
+              <span class="msg-name">王小明</span>
+              <div class="bubble">生日快乐！🎂</div>
+            </div>
+          </div>
+
+          <div class="msg me">
+            <div class="avatar" style="background:linear-gradient(135deg,#12B7F5,#0099FF)">我</div>
+            <div class="msg-body">
+              <div class="bubble">谢谢！</div>
+            </div>
+          </div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#FFB84D,#FF6B6B)">王</div>
+            <div class="msg-body">
+              <div class="bubble">周末一起吃饭？</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="composer">
+          <div class="composer-tools">
+            <span class="tool-btn" title="表情">😊</span>
+            <span class="tool-btn" title="图片">🖼</span>
+            <span class="tool-btn" title="文件">📎</span>
+            <span class="tool-btn" title="截图">✂</span>
+          </div>
+          <textarea class="composer-input" placeholder="输入消息…" aria-label="消息输入"></textarea>
+          <div class="composer-foot">
+            <span class="composer-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> 发送</span>
+            <button class="send-btn" type="button">发送</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 家人群 -->
+      <div class="chat-view" data-chat="family">
+        <header class="chat-head">
+          <div class="chat-title-wrap">
+            <div class="chat-title">家人群 <span style="font-size:12px;color:var(--qq-text-3);font-weight:400;">(4)</span></div>
+            <div class="chat-sub">4 人在线</div>
+          </div>
+          <div class="chat-actions">
+            <span class="chat-action" title="语音通话">📞</span>
+            <span class="chat-action" title="视频通话">📹</span>
+            <span class="chat-action" title="更多">⋯</span>
+          </div>
+        </header>
+
+        <div class="messages">
+          <div class="time-divider">周一 18:42</div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#FF8C5A,#FF5A8C)">妈</div>
+            <div class="msg-body">
+              <span class="msg-name">妈妈</span>
+              <div class="bubble">晚上回来吃饭吗</div>
+            </div>
+          </div>
+
+          <div class="msg me">
+            <div class="avatar" style="background:linear-gradient(135deg,#12B7F5,#0099FF)">我</div>
+            <div class="msg-body">
+              <div class="bubble">回的，大概 7 点到</div>
+            </div>
+          </div>
+
+          <div class="msg">
+            <div class="avatar" style="background:linear-gradient(135deg,#78909C,#4A5A66)">爸</div>
+            <div class="msg-body">
+              <span class="msg-name">爸爸</span>
+              <div class="bubble">路上注意安全</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="composer">
+          <div class="composer-tools">
+            <span class="tool-btn" title="表情">😊</span>
+            <span class="tool-btn" title="图片">🖼</span>
+            <span class="tool-btn" title="文件">📎</span>
+            <span class="tool-btn" title="截图">✂</span>
+          </div>
+          <textarea class="composer-input" placeholder="输入消息…" aria-label="消息输入"></textarea>
+          <div class="composer-foot">
+            <span class="composer-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> 发送</span>
+            <button class="send-btn" type="button">发送</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 联系人空态 -->
+    <div class="main-empty" data-empty="contacts">
+      <div class="empty-icon">👥</div>
+      <div class="empty-title">选择一个联系人</div>
+      <div class="empty-sub">查看资料或发起会话</div>
+    </div>
+
+    <!-- 群聊空态 -->
+    <div class="main-empty" data-empty="groups">
+      <div class="empty-icon">💬</div>
+      <div class="empty-title">群聊列表</div>
+      <div class="empty-sub">选择一个群开始聊天</div>
+    </div>
+
+    <!-- 设置空态 -->
+    <div class="main-empty" data-empty="settings">
+      <div class="empty-icon">⚙</div>
+      <div class="empty-title">设置</div>
+      <div class="empty-sub">在左侧调整你的偏好</div>
+    </div>
+
+  </main>
+
+</div>
+
+<!--
+════════════════════════════════════════════════════════════════════
+  特性清单
+────────────────────────────────────────────────────────────────────
+  HTML
+    · 大量 radio + label 驱动的状态切换（导航 / 会话）
+    · checkbox 驱动的深色模式与设置开关
+    · textarea / input[type=search] 原生控件
+    · 语义化 <aside> <main> <nav> <header>
+    · 内联 SVG 图标（stroke + fill:none）
+
+  CSS
+    · :checked ~ 兄弟选择器——整套页面切换的核心
+    · :has() —— 让深色模式可以放在任意位置
+    · CSS 自定义属性 —— 全局主题变量
+    · 多层 radial-gradient / linear-gradient
+    · 气泡伪元素三角（background: inherit 自动跟随气泡色）
+    · 自定义滚动条（scrollbar-width / ::-webkit-scrollbar）
+    · flexbox 三栏布局
+    · transition 多属性过渡
+    · 媒体查询适配窄屏
+    · prefers-reduced-motion 尊重减弱动效偏好
+    · text-shadow / box-shadow 立体感
+
+  明确没有
+    · 任何 <script>
+    · 任何网络请求
+    · 任何事件属性（onclick 之类）
+════════════════════════════════════════════════════════════════════
+-->
+</body>
+</html>

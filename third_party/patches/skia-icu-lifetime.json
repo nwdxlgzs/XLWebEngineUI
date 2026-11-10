@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "upstream": "Skia c40d8c9ce6295b8d21a6ad6ef95522729bbadba7",
+  "file": "modules/skunicode/src/SkUnicode_icu.cpp",
+  "description": "Expose a private cache purge before the SDK's last ICU session performs u_cleanup and releases memory-only data. All paragraph users must already have exited.",
+  "replacements": [
+    {
+      "before": "    ICUBreakIterator makeBreakIterator(SkUnicode::BreakType type, const char* bcp47) {",
+      "after": "    void clearForSDKCleanup() {\n        SkAutoMutexExclusive lock(fCacheMutex);\n        fRequestCache.reset();\n    }\n\n    ICUBreakIterator makeBreakIterator(SkUnicode::BreakType type, const char* bcp47) {"
+    },
+    {
+      "before": "/*static*/ int32_t SkIcuBreakIteratorCache::BreakIteratorRef::Instances{0};",
+      "after": "/*static*/ int32_t SkIcuBreakIteratorCache::BreakIteratorRef::Instances{0};\n\n// Private SDK lifecycle hook; called after all SkUnicode/paragraph users exit.\nextern \"C\" void xl_skia_purge_icu_cache() {\n    SkIcuBreakIteratorCache::get().clearForSDKCleanup();\n}"
+    }
+  ]
+}

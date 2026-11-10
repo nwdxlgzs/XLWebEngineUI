@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.20)
+project(XLRuntimeExample LANGUAGES CXX)
+find_package(XLWebEngineUI CONFIG REQUIRED)
+add_executable(xl_runtime_example main.cpp)
+target_link_libraries(xl_runtime_example PRIVATE XLWebEngineUI::Static)
+if(MSVC)
+  set_property(TARGET xl_runtime_example PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()

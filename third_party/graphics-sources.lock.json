@@ -1,0 +1,182 @@
+{
+  "schema": 1,
+  "checked_on": "2026-11-03",
+  "dependencies": {
+    "angle": {
+      "name": "angle",
+      "repository": "https://github.com/google/angle",
+      "commit": "a932c2949f691c0c4aa8c0f5615fa1999b0447a2",
+      "revision": "a932c2949f691c0c4aa8c0f5615fa1999b0447a2",
+      "checked_on": "2026-11-03",
+      "archive": "angle-a932c2949f69.tar.gz",
+      "archive_root": "angle-a932c2949f691c0c4aa8c0f5615fa1999b0447a2",
+      "sha256": "21ef65da36891ae25d8ca3fbdb14d60edb46e3314544a9a827da93d06c4f9a92",
+      "bytes": 17075993,
+      "urls": [
+        "https://codeload.github.com/google/angle/tar.gz/a932c2949f691c0c4aa8c0f5615fa1999b0447a2"
+      ],
+      "hash_authority": "SHA256 of official repository archive at exact pinned commit",
+      "license": "BSD-3-Clause",
+      "selected_license": "BSD-3-Clause",
+      "license_files": [
+        "LICENSE"
+      ],
+      "patches": [
+        "third_party/patches/angle-win7-dcomp.json",
+        "third_party/patches/angle-win7-mutex.json",
+        "third_party/patches/angle-optional-fxc.json"
+      ]
+    },
+    "dxcompiler": {
+      "name": "dxcompiler",
+      "repository": "https://github.com/microsoft/DirectXShaderCompiler",
+      "commit": "e55cdd3729d9b4ea04a38cd4fe173f4fdc8bfa83",
+      "revision": "e55cdd3729d9b4ea04a38cd4fe173f4fdc8bfa83",
+      "checked_on": "2026-11-03",
+      "archive": "DirectXShaderCompiler-e55cdd3729d9.tar.gz",
+      "archive_root": "DirectXShaderCompiler-e55cdd3729d9b4ea04a38cd4fe173f4fdc8bfa83",
+      "sha256": "4441f36a5d1b348f42e22a8716a25e22b1b91345943afcfb663f9712a3f04ac4",
+      "bytes": 25240581,
+      "urls": [
+        "https://codeload.github.com/microsoft/DirectXShaderCompiler/tar.gz/e55cdd3729d9b4ea04a38cd4fe173f4fdc8bfa83"
+      ],
+      "hash_authority": "SHA256 of official repository archive at exact pinned commit",
+      "license": "NCSA AND MIT",
+      "selected_license": "NCSA AND MIT",
+      "license_files": [
+        "LICENSE.TXT",
+        "lib/DxilCompression/miniz.c"
+      ],
+      "patches": [
+        "third_party/patches/dxcompiler-static-lifetime.json"
+      ],
+      "license_scope": "Selected DXC/LLVM/Clang runtime code; root aggregate also documents build-tool licenses. Preserve runtime notices; do not ship compiler tests or autotools."
+    },
+    "chromium-zlib-utils": {
+      "name": "chromium-zlib-utils",
+      "repository": "https://github.com/chromium/chromium",
+      "revision": "bea4a6a61b646c803bfa9fb46c526b62c491fb93",
+      "commit": "bea4a6a61b646c803bfa9fb46c526b62c491fb93",
+      "checked_on": "2026-11-04",
+      "sha256": "a1633828cda16b07b6849f2998e7d3fd4a15cf8fbfaea599e73ff104c5287b7d",
+      "files": [
+        {
+          "path": "google/compression_utils_portable.cc",
+          "archive": "chromium-zlib-utils-bea4a6a61b64-google_compression_utils_portable.cc",
+          "bytes": 7217,
+          "sha256": "5213dd083af3d7099251413e0fe8988ffe998b0dbee68722899910c480aea933",
+          "urls": [
+            "https://raw.githubusercontent.com/chromium/chromium/bea4a6a61b646c803bfa9fb46c526b62c491fb93/third_party/zlib/google/compression_utils_portable.cc"
+          ]
+        },
+        {
+          "path": "google/compression_utils_portable.h",
+          "archive": "chromium-zlib-utils-bea4a6a61b64-google_compression_utils_portable.h",
+          "bytes": 1858,
+          "sha256": "ad6e83438a781734e0b8873b846b3cafae5ca31e1bf2c56a3d8c7ea2d9dc0c19",
+          "urls": [
+            "https://raw.githubusercontent.com/chromium/chromium/bea4a6a61b646c803bfa9fb46c526b62c491fb93/third_party/zlib/google/compression_utils_portable.h"
+          ]
+        },
+        {
+          "path": "LICENSE",
+          "archive": "chromium-zlib-utils-bea4a6a61b64-LICENSE",
+          "bytes": 1002,
+          "sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2",
+          "urls": [
+            "https://raw.githubusercontent.com/chromium/chromium/bea4a6a61b646c803bfa9fb46c526b62c491fb93/third_party/zlib/LICENSE"
+          ]
+        },
+        {
+          "path": "CHROMIUM-LICENSE",
+          "archive": "chromium-zlib-utils-bea4a6a61b64-CHROMIUM-LICENSE",
+          "bytes": 1536,
+          "sha256": "368cca1106be99d39ecd32a38d8305585d802a475effb66380b91ffc9bcf709b",
+          "urls": [
+            "https://raw.githubusercontent.com/chromium/chromium/bea4a6a61b646c803bfa9fb46c526b62c491fb93/LICENSE"
+          ]
+        }
+      ],
+      "license": "BSD-3-Clause AND Zlib",
+      "selected_license": "BSD-3-Clause AND Zlib",
+      "license_files": [
+        "CHROMIUM-LICENSE",
+        "LICENSE"
+      ],
+      "hash_authority": "Official Chromium exact commit file bytes retrieved through GitHub contents API; per-file SHA256 and reconstructible URLs"
+    },
+    "swiftshader": {
+      "name": "swiftshader",
+      "repository": "https://github.com/google/swiftshader",
+      "commit": "cddb5c91b23ff70a1f607ea31610aa0d7f4b5ad5",
+      "revision": "cddb5c91b23ff70a1f607ea31610aa0d7f4b5ad5",
+      "checked_on": "2026-11-04",
+      "archive": "swiftshader-cddb5c91b23f.tar.gz",
+      "archive_root": "swiftshader-cddb5c91b23ff70a1f607ea31610aa0d7f4b5ad5",
+      "sha256": "ea162eebba5a021069bc5d4d1c6bcb8eb50befbe4c4d304947cdfc0e8a49db75",
+      "bytes": 98902597,
+      "urls": [
+        "https://codeload.github.com/google/swiftshader/tar.gz/cddb5c91b23ff70a1f607ea31610aa0d7f4b5ad5"
+      ],
+      "hash_authority": "SHA256 of complete official repository archive; gzip CRC/length and exact commit root verified",
+      "license": "Apache-2.0",
+      "selected_license": "Apache-2.0 AND NCSA AND MIT",
+      "license_files": [
+        "LICENSE.txt",
+        "third_party/marl/LICENSE",
+        "third_party/SPIRV-Tools/LICENSE",
+        "third_party/SPIRV-Headers/LICENSE",
+        "third_party/SPIRV-Headers/LICENSES/MIT.txt",
+        "third_party/astc-encoder/LICENSE.txt",
+        "third_party/llvm-subzero/LICENSE.TXT",
+        "third_party/subzero/LICENSE.TXT"
+      ],
+      "patches": [
+        "third_party/patches/swiftshader-static-subzero.json"
+      ],
+      "extract_prefixes": [
+        "CMakeLists.txt",
+        "LICENSE.txt",
+        "src",
+        "include",
+        "cmake",
+        "third_party/SPIRV-Headers",
+        "third_party/SPIRV-Tools",
+        "third_party/astc-encoder",
+        "third_party/marl",
+        "third_party/llvm-subzero",
+        "third_party/subzero"
+      ],
+      "license_scope": "Selected Vulkan/Subzero runtime closure only; unselected LLVM trees/tests/debug tooling excluded"
+    },
+    "libglvnd-headers": {
+      "name": "libglvnd-headers",
+      "repository": "https://github.com/NVIDIA/libglvnd",
+      "revision": "606f6627cf481ee6dcb32387edc010c502cdf38b",
+      "commit": "606f6627cf481ee6dcb32387edc010c502cdf38b",
+      "checked_on": "2026-11-04",
+      "sha256": "765b1ccdb560ae926ba28f396b3cd2a0d8666172625858d79e3a37cfd4090335",
+      "bytes": 839523,
+      "archive": "libglvnd-headers-606f6627cf48.tar.gz",
+      "archive_root": "libglvnd-606f6627cf481ee6dcb32387edc010c502cdf38b",
+      "urls": [
+        "https://codeload.github.com/NVIDIA/libglvnd/tar.gz/606f6627cf481ee6dcb32387edc010c502cdf38b"
+      ],
+      "extract_prefixes": [
+        "include/GL",
+        "include/KHR"
+      ],
+      "license": "MIT",
+      "selected_license": "MIT",
+      "license_files": [
+        "include/GL/gl.h",
+        "include/GL/glx.h",
+        "include/GL/glext.h",
+        "include/GL/glxext.h",
+        "include/KHR/khrplatform.h"
+      ],
+      "purpose": "Header-only GL/GLX ABI declarations for Linux ANGLE; no GLVND driver/runtime is built or redistributed",
+      "hash_authority": "Official NVIDIA libglvnd current master commit archive; exact codeload bytes SHA256"
+    }
+  }
+}

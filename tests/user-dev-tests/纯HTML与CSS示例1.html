@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>纯 HTML + CSS 示例页</title>
+<style>
+  /* ========== 基础重置 ========== */
+  * { box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ========== 主题变量（日间 / 夜间） ========== */
+  .page {
+    --bg:      #f6f7f9;
+    --surface: #ffffff;
+    --text:    #1f2328;
+    --muted:   #656d76;
+    --border:  #d8dee4;
+    --accent:  #3b6ef5;
+    --shadow:  rgba(31, 35, 40, .10);
+
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background .3s, color .3s;
+  }
+
+  /* 用 :checked + 兄弟选择器实现夜间模式，无需 JS */
+  #theme:checked ~ .page {
+    --bg:      #0d1117;
+    --surface: #161b22;
+    --text:    #e6edf3;
+    --muted:   #9198a1;
+    --border:  #30363d;
+    --accent:  #6f9bff;
+    --shadow:  rgba(0, 0, 0, .55);
+  }
+
+  /* 隐藏所有交互用的隐藏控件 */
+  .hidden-input { display: none; }
+
+  /* ========== 布局工具 ========== */
+  .wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  .section {
+    padding: 3rem 0;
+    scroll-margin-top: 80px;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin: 0 0 1.25rem;
+    padding-left: .75rem;
+    border-left: 4px solid var(--accent);
+    line-height: 1.3;
+  }
+
+  /* ========== 顶部导航 ========== */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    min-height: 60px;
+  }
+
+  .logo {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--text);
+    text-decoration: none;
+    margin-right: auto;
+  }
+
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+
+  .nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: .95rem;
+    padding: .25rem 0;
+    border-bottom: 2px solid transparent;
+    transition: color .2s, border-color .2s;
+  }
+
+  .nav a:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* 主题切换按钮（本质是一个 label） */
+  .theme-btn {
+    cursor: pointer;
+    user-select: none;
+    font-size: .85rem;
+    padding: .35rem .8rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--muted);
+    transition: .2s;
+  }
+
+  .theme-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .theme-btn::after { content: "🌙 夜间"; }
+  #theme:checked ~ .page .theme-btn::after { content: "☀️ 日间"; }
+
+  /* ========== 首屏 ========== */
+  .hero {
+    padding: 4.5rem 0 3.5rem;
+    text-align: center;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(59, 110, 245, .14), transparent 55%),
+      radial-gradient(circle at 80% 0%, rgba(140, 90, 245, .14), transparent 55%);
+  }
+
+  .hero h1 {
+    font-size: clamp(1.7rem, 4vw, 2.6rem);
+    margin: 0 0 1rem;
+    line-height: 1.25;
+  }
+
+  .hero .lead {
+    max-width: 620px;
+    margin: 0 auto 2rem;
+    color: var(--muted);
+    font-size: 1.05rem;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: .65rem 1.6rem;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .2s;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px var(--shadow);
+  }
+
+  /* ========== 卡片网格 ========== */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.25rem;
+    transition: transform .2s, box-shadow .2s, border-color .2s;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 10px 26px var(--shadow);
+  }
+
+  .card h3 {
+    margin: 0 0 .4rem;
+    font-size: 1.05rem;
+  }
+
+  .card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: .93rem;
+  }
+
+  /* ========== CSS 标签页 ========== */
+  .tabs > input { display: none; }
+
+  .tab-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.25rem;
+  }
+
+  .tab-labels label {
+    padding: .55rem 1.1rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: .95rem;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    border-radius: 8px 8px 0 0;
+    transition: .2s;
+  }
+
+  .tab-labels label:hover { color: var(--text); background: var(--bg); }
+
+  /* 选中态：高亮对应的 label */
+  #tab-1:checked ~ .tab-labels label[for="tab-1"],
+  #tab-2:checked ~ .tab-labels label[for="tab-2"],
+  #tab-3:checked ~ .tab-labels label[for="tab-3"] {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .panels > .panel {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.4rem;
+  }
+
+  /* 选中态：显示对应的面板 */
+  #tab-1:checked ~ .panels > .panel:nth-child(1),
+  #tab-2:checked ~ .panels > .panel:nth-child(2),
+  #tab-3:checked ~ .panels > .panel:nth-child(3) {
+    display: block;
+  }
+
+  .panel ul { margin: .5rem 0 0; padding-left: 1.2rem; color: var(--muted); }
+  .panel li { margin-bottom: .3rem; }
+
+  pre {
+    margin: 0;
+    padding: 1rem;
+    overflow-x: auto;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: .87rem;
+    line-height: 1.6;
+  }
+
+  code { font-family: ui-monospace, "SF Mono", Consolas, monospace; }
+
+  /* ========== 折叠面板 ========== */
+  details {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: .85rem 1.15rem;
+    margin-bottom: .7rem;
+    transition: border-color .2s;
+  }
+
+  details[open] { border-color: var(--accent); }
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  summary::-webkit-details-marker { display: none; }
+
+  summary::after {
+    content: "＋";
+    color: var(--accent);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  details[open] summary::after { content: "－"; }
+
+  details p {
+    margin: .75rem 0 0;
+    color: var(--muted);
+    font-size: .94rem;
+  }
+
+  /* ========== 表单 ========== */
+  .form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+  }
+
+  .field { margin-bottom: 1rem; }
+
+  .field label {
+    display: block;
+    font-size: .9rem;
+    font-weight: 600;
+    margin-bottom: .35rem;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  select,
+  textarea {
+    width: 100%;
+    padding: .6rem .85rem;
+    font: inherit;
+    font-size: .95rem;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    transition: border-color .2s, box-shadow .2s;
+  }
+
+  textarea { resize: vertical; min-height: 110px; }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 110, 245, .18);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  /* ========== 页脚 ========== */
+  .site-footer {
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    padding: 2rem 0;
+    color: var(--muted);
+    font-size: .9rem;
+  }
+
+  .site-footer .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .site-footer a { color: var(--accent); text-decoration: none; }
+  .site-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- 主题开关：隐藏的复选框，靠 label 触发 -->
+<input type="checkbox" id="theme" class="hidden-input">
+
+<div class="page">
+
+  <!-- ==================== 顶部导航 ==================== -->
+  <header class="site-header">
+    <div class="wrap bar">
+      <a class="logo" href="#top">🎨 示例站</a>
+      <nav class="nav">
+        <a href="#features">功能</a>
+        <a href="#tabs">标签页</a>
+        <a href="#faq">问答</a>
+        <a href="#contact">联系</a>
+      </nav>
+      <label class="theme-btn" for="theme" title="切换日间/夜间主题"></label>
+    </div>
+  </header>
+
+  <!-- ==================== 首屏 ==================== -->
+  <section class="hero" id="top">
+    <div class="wrap">
+      <h1>纯 HTML + CSS 的网页示例</h1>
+      <p class="lead">
+        这个页面<strong>没有使用任何 JavaScript</strong>。
+        标签页、折叠面板、日间/夜间主题切换，全部由 HTML 结构和 CSS 选择器实现。
+      </p>
+      <a class="btn" href="#features">开始浏览</a>
+    </div>
+  </section>
+
+  <!-- ==================== 卡片区 ==================== -->
+  <section class="section wrap" id="features">
+    <h2>页面用了哪些技术</h2>
+    <div class="cards">
+      <article class="card">
+        <h3>语义化标签</h3>
+        <p>header、nav、section、article、footer 让页面结构清晰、利于阅读与检索。</p>
+      </article>
+      <article class="card">
+        <h3>CSS 变量</h3>
+        <p>用 <code>--var</code> 定义颜色，切换主题只需改变量值，维护成本极低。</p>
+      </article>
+      <article class="card">
+        <h3>Grid 与 Flex</h3>
+        <p>卡片网格用 Grid 自动换行，导航栏用 Flex 对齐，天然响应式。</p>
+      </article>
+      <article class="card">
+        <h3>原生控件</h3>
+        <p><code>&lt;details&gt;</code> 自带折叠交互，无需一行脚本。</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ==================== CSS 标签页 ==================== -->
+  <section class="section wrap" id="tabs">
+    <h2>纯 CSS 标签页</h2>
+
+    <div class="tabs">
+      <!-- 单选按钮：同一 name 保证互斥 -->
+      <input type="radio" name="tab" id="tab-1" checked>
+      <input type="radio" name="tab" id="tab-2">
+      <input type="radio" name="tab" id="tab-3">
+
+      <!-- label 的 for 指向对应的 radio -->
+      <div class="tab-labels">
+        <label for="tab-1">概览</label>
+        <label for="tab-2">代码片段</label>
+        <label for="tab-3">实现原理</label>
+      </div>
+
+      <div class="panels">
+        <div class="panel">
+          <h3>概览</h3>
+          <p>点击上方标签即可切换内容，整个过程没有任何脚本参与。</p>
+          <ul>
+            <li>三个 <code>&lt;input type="radio"&gt;</code> 互斥选中</li>
+            <li><code>&lt;label for&gt;</code> 负责点击代理</li>
+            <li><code>:checked ~ </code> 兄弟选择器控制显示隐藏</li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <h3>结构示例</h3>
+          <pre><code>&lt;div class="tabs"&gt;
+  &lt;input type="radio" name="tab" id="tab-1" checked&gt;
+  &lt;input type="radio" name="tab" id="tab-2"&gt;
+
+  &lt;div class="tab-labels"&gt;
+    &lt;label for="tab-1"&gt;概览&lt;/label&gt;
+    &lt;label for="tab-2"&gt;详情&lt;/label&gt;
+  &lt;/div&gt;
+
+  &lt;div class="panels"&gt;
+    &lt;div class="panel"&gt;……&lt;/div&gt;
+    &lt;div class="panel"&gt;……&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+
+        <div class="panel">
+          <h3>实现原理</h3>
+          <p>默认所有面板 <code>display: none</code>，当某个 radio 处于 <code>:checked</code> 状态时，
+             通过兄弟选择器把第 N 个面板设为 <code>display: block</code>：</p>
+          <pre><code>#tab-1:checked ~ .panels &gt; .panel:nth-child(1) {
+  display: block;
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 折叠面板 ==================== -->
+  <section class="section wrap" id="faq">
+    <h2>常见问题</h2>
+
+    <details open>
+      <summary>真的完全没有 JavaScript 吗？</summary>
+      <p>是的。页面里没有任何 <code>&lt;script&gt;</code> 标签，也没有内联事件属性。</p>
+    </details>
+
+    <details>
+      <summary>夜间模式是怎么实现的？</summary>
+      <p>页面顶部的复选框被 label 点击后变为 <code>:checked</code>，
+         再用 <code>#theme:checked ~ .page</code> 覆盖一组 CSS 变量即可。</p>
+    </details>
+
+    <details>
+      <summary>能自适应手机屏幕吗？</summary>
+      <p>可以。布局基于 <code>auto-fit</code> 的 Grid 与可换行的 Flex，
+         并设置了 <code>viewport</code> 元标签。</p>
+    </details>
+
+    <details>
+      <summary>这种方式的局限是什么？</summary>
+      <p>无法处理复杂逻辑（数据请求、计算、状态持久化等）。
+         真正的应用场景仍需要 JavaScript 配合。</p>
+    </details>
+  </section>
+
+  <!-- ==================== 表单 ==================== -->
+  <section class="section wrap" id="contact">
+    <h2>联系表单</h2>
+    <form class="form-card" action="#" method="post">
+      <div class="row">
+        <div class="field">
+          <label for="name">姓名</label>
+          <input type="text" id="name" name="name" placeholder="请输入姓名" required>
+        </div>
+        <div class="field">
+          <label for="email">邮箱</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="topic">主题</label>
+        <select id="topic" name="topic">
+          <option value="cooperation">合作咨询</option>
+          <option value="feedback">意见反馈</option>
+          <option value="other">其他</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="message">留言内容</label>
+        <textarea id="message" name="message" placeholder="写点什么……"></textarea>
+      </div>
+
+      <button class="btn" type="submit">提交</button>
+    </form>
+  </section>
+
+  <!-- ==================== 页脚 ==================== -->
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© 2025 纯 HTML + CSS 示例页</span>
+      <span><a href="#top">回到顶部 ↑</a></span>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

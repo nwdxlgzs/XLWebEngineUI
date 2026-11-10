@@ -1,0 +1,27 @@
+/build/
+/CMakeUserPresets.json
+/.local/
+**/__pycache__/
+*.pyc
+/.vs/
+/.idea/
+/.vscode/
+/.cache/
+
+# Keep local credentials and diagnostic dumps out of source control.
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+credentials.*.json
+*.pdb
+*.dmp
+*.log
+*.tmp
+Thumbs.db
+.DS_Store

@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "target": "vk_swiftshader",
+  "options": {
+    "REACTOR_BACKEND": "Subzero",
+    "REACTOR_EMIT_DEBUG_INFO": false,
+    "SWIFTSHADER_BUILD_TESTS": false,
+    "SWIFTSHADER_BUILD_BENCHMARKS": false,
+    "SWIFTSHADER_BUILD_PVR": false,
+    "SWIFTSHADER_BUILD_WSI_XCB": false,
+    "SWIFTSHADER_BUILD_WSI_WAYLAND": false,
+    "SWIFTSHADER_BUILD_WSI_DIRECTFB": false,
+    "SWIFTSHADER_BUILD_WSI_D2D": false,
+    "SWIFTSHADER_WARNINGS_AS_ERRORS": false,
+    "SWIFTSHADER_LESS_DEBUG_INFO": true,
+    "BUILD_SHARED_LIBS": false
+  }
+}

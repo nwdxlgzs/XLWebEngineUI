@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "file": "src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow11Win32.cpp",
+  "description": "Expose immutable DirectComposition COM interfaces with Win7 target macros. Upstream loads dcomp.dll and DCompositionCreateDevice at runtime; this patch changes declarations only.",
+  "replacements": [
+    {
+      "before": "#include <dcomp.h>\n",
+      "after": "// XLWebEngineUI: declarations only; runtime feature probing remains upstream.\n#pragma push_macro(\"NTDDI_VERSION\")\n#pragma push_macro(\"_WIN32_WINNT\")\n#pragma push_macro(\"WINVER\")\n#undef NTDDI_VERSION\n#undef _WIN32_WINNT\n#undef WINVER\n#define NTDDI_VERSION 0x06030000\n#define _WIN32_WINNT 0x0603\n#define WINVER 0x0603\n#include <dcomp.h>\n#pragma pop_macro(\"WINVER\")\n#pragma pop_macro(\"_WIN32_WINNT\")\n#pragma pop_macro(\"NTDDI_VERSION\")\n"
+    }
+  ]
+}

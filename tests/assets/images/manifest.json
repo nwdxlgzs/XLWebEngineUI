@@ -1,0 +1,12 @@
+{
+  "origin": "Generated solid red images; no third-party artwork.",
+  "generator": "Pillow 11.3.0, RGB(255,0,0) 4x2; ICO RGBA 16x16",
+  "files": {
+    "red.bmp": "a1d2bbb5c335af7fb2e22c05f08353ea0239a728f897ce032cd162907ccce504",
+    "red.gif": "e3faa049286a4f539e6f62e4d8c88d6aea66ecbd8d5941b529e3214b10b55608",
+    "red.ico": "af3a09074a7f2a09a1457bd0ba31bb60ca4966e2db4b23848ccec80baf7f3498",
+    "red.jpg": "8a3e9e478299a2f95cc6909e4c7d1604ed39995bedbfb18844dfaf20563662f0",
+    "red.png": "19a6517da04bdb8bf1cbe533d934ebfe623dfc331a1284487f0eb178ebac268c",
+    "red.webp": "c90b61ae90cbd99e5422c5ac3eb49015db52554ba5c3c37fda59b4a6f8daa03a"
+  }
+}

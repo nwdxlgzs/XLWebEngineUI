@@ -1,0 +1,59 @@
+{
+  "version": 2,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "cacheVariables": {
+        "BUILD_TESTING": "ON",
+        "XL_BUILD_EXAMPLES": "ON"
+      }
+    },
+    {
+      "name": "windows-x64-debug",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build/work/windows-x64/manual/Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "XL_BUILD_ABI": "windows-x64-clang-msvc",
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/toolchains/windows-x64-clang.cmake"
+      }
+    },
+    {
+      "name": "windows-x64-release",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build/work/windows-x64/manual/Release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "XL_BUILD_ABI": "windows-x64-clang-msvc",
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/toolchains/windows-x64-clang.cmake"
+      }
+    },
+    {
+      "name": "linux-x64-glibc-dev-debug",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build/work/linux-x64-glibc-dev/manual/Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "XL_BUILD_ABI": "linux-x64-glibc-development",
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/toolchains/linux-x64-clang.cmake"
+      }
+    },
+    {
+      "name": "linux-x64-glibc-dev-release",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build/work/linux-x64-glibc-dev/manual/Release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "XL_BUILD_ABI": "linux-x64-glibc-development",
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/toolchains/linux-x64-clang.cmake"
+      }
+    }
+  ]
+}

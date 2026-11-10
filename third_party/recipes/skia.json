@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "common": {
+    "is_component_build": false,
+    "target_cpu": "x64",
+    "skia_enable_tools": false,
+    "skia_enable_skshaper": true,
+    "skia_enable_skparagraph": true,
+    "skia_enable_pdf": false,
+    "skia_use_xps": false,
+    "skia_enable_svg": true,
+    "skia_use_expat": true,
+    "skia_use_wuffs": true,
+    "skia_use_piex": false,
+    "skia_use_partition_alloc": false,
+    "skia_use_dawn": true,
+    "skia_use_perfetto": false,
+    "skia_use_system_zlib": true,
+    "skia_use_system_libpng": true,
+    "skia_use_system_libjpeg_turbo": true,
+    "skia_use_system_libwebp": true,
+    "skia_use_system_harfbuzz": true,
+    "skia_use_system_icu": true,
+    "skia_use_gl": true,
+    "skia_use_vulkan": true,
+    "skia_enable_ganesh": true,
+    "skia_enable_graphite": true,
+    "skia_use_fontconfig": false,
+    "skia_use_system_expat": false
+  },
+  "windows-x64": {
+    "skia_use_direct3d": true
+  },
+  "linux-x64-musl": {
+    "skia_use_direct3d": false
+  },
+  "linux-x64-glibc-dev": {
+    "skia_use_direct3d": false
+  },
+  "macos": {
+    "skia_use_metal": true
+  },
+  "web": {
+    "skia_use_vulkan": false,
+    "skia_use_webgl": true
+  },
+  "build_targets": [
+    "skia",
+    "skshaper",
+    "skparagraph",
+    "svg",
+    "skresources"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "schema": 1,
+  "components": {
+    "libXtst": {"base_depends": ["libX11", "libXext", "libXi"], "options": ["--disable-specs"], "libraries": ["lib/libXtst.a"]}
+  }
+}

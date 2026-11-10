@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "file": "src/gpu/ganesh/d3d/GrD3DPipelineStateBuilder.cpp",
+  "description": "FXC is optional, resolved lazily from explicit engine/system directories; no hard d3dcompiler DLL import",
+  "replacements": [
+    {
+      "before": "\n#include <d3dcompiler.h>\n",
+      "after": "\n#include <d3dcompiler.h>\n#include <cwchar>\n\n// XLWebEngineUI: optional FXC, safe on Win7 without d3dcompiler_47.dll.\n// Use the engine image directory first, then the Windows system directory.\n// Never search the current working directory. Static initialization is thread-safe.\ntemplate<class... Args>\nstatic HRESULT xl_optional_D3DCompile(Args... args) {\n    struct Compiler {\n        HMODULE module = nullptr;\n        decltype(&D3DCompile) compile = nullptr;\n        Compiler() {\n            HMODULE owner = nullptr;\n            wchar_t path[32768]{};\n            if (GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |\n                                   GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,\n                                   reinterpret_cast<LPCWSTR>(&xl_optional_D3DCompile<Args...>), &owner)) {\n                DWORD length = GetModuleFileNameW(owner, path, 32768);\n                if (length && length < 32768) {\n                    wchar_t* slash = wcsrchr(path, L'\\\\');\n                    if (slash && (slash - path) + 20 < 32768) {\n                        wcscpy(slash + 1, L\"d3dcompiler_47.dll\");\n                        module = LoadLibraryW(path);\n                    }\n                }\n            }\n            if (!module) {\n                UINT length = GetSystemDirectoryW(path, 32768);\n                if (length && length + 21 < 32768) {\n                    wcscat(path, L\"\\\\d3dcompiler_47.dll\");\n                    module = LoadLibraryW(path);\n                }\n            }\n            if (module) compile = reinterpret_cast<decltype(compile)>(GetProcAddress(module, \"D3DCompile\"));\n        }\n        ~Compiler() { if (module) FreeLibrary(module); }\n    };\n    static const Compiler compiler;\n    return compiler.compile ? compiler.compile(args...) : E_NOINTERFACE;\n}\n\n// Prefer the compiler explicitly chosen for this device; keep optional FXC as default.\ntemplate<class... Args>\nstatic HRESULT xl_device_D3DCompile(GrD3DGpu* gpu, Args... args) {\n    if (auto compiler = gpu->shaderCompiler()) return compiler(args...);\n    return xl_optional_D3DCompile(args...);\n}\n"
+    },
+    {
+      "before": "HRESULT hr = D3DCompile(",
+      "after": "HRESULT hr = xl_device_D3DCompile(gpu, ",
+      "occurrences": 2
+    },
+    {
+      "before": "reinterpret_cast<char*>(errors->GetBufferPointer())",
+      "after": "errors ? reinterpret_cast<char*>(errors->GetBufferPointer()) : \"Optional FXC unavailable or shader compilation failed without diagnostics\"",
+      "occurrences": 2
+    }
+  ]
+}

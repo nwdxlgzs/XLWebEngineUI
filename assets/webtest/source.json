@@ -1,0 +1,13 @@
+{
+  "name": "Roboto variable font",
+  "repository": "https://github.com/google/fonts",
+  "commit": "1c627bfa375fc51cf86fabeca4f6e08a95f0aa5c",
+  "upstream_path": "ofl/roboto/Roboto[wdth,wght].ttf",
+  "checked_on": "2026-11-03",
+  "license": "OFL-1.1",
+  "files": {
+    "Roboto.ttf": "d7598e12c5dbef095ff8272cfc55da0250bd07fbdecbac8a530b9b277872a134",
+    "OFL.txt": "061402327a96aadb0bfb694a960ed289ecd38d383e396243831ab81feb109c41"
+  },
+  "policy": "Unmodified font bundled only with WebTest; compressed into its executable, decoded in memory only on font demand. Preserve the original font license; it does not apply to engine/application source."
+}

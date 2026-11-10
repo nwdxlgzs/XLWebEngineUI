@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "phase": "web-core",
+  "production_ready": false,
+  "requirements": {
+    "official_windows_and_musl_sdk": false,
+    "lazy_resources_and_lifecycle": false,
+    "sdl_skia_and_host_embedding": false,
+    "html_css_dom_and_javascript": false,
+    "text_input_and_editing": false,
+    "platform_accessibility": false,
+    "webm_playback": false,
+    "incremental_rendering_and_recovery": false,
+    "licenses_and_distribution": false
+  }
+}

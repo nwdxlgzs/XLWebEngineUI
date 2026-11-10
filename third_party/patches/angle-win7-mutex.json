@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "file": "src/common/SimpleMutex.h",
+  "description": "Use upstream standard mutex fallback when targeting pre-Win8; do not hard-import WaitOnAddress/WakeByAddressSingle on Windows 7.",
+  "replacements": [
+    {
+      "before": "        !defined(ANGLE_WINDOWS_NO_FUTEX)\n",
+      "after": "        !defined(ANGLE_WINDOWS_NO_FUTEX) && \\\n        (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0602)\n"
+    }
+  ]
+}

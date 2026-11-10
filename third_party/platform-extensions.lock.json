@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "checked_on": "2026-11-03",
+  "purpose": "Private musl platform extensions built against the locked X11 base",
+  "dependencies": {
+    "libXtst": {
+      "name": "libXtst",
+      "revision": "1.2.6",
+      "archive": "libXtst-1.2.6.tar.xz",
+      "archive_root": "libXtst-1.2.6",
+      "bytes": 299372,
+      "sha256": "f94f0b37c07d80d877f3eda2c2405cc7e62aa9842f6310354aa349e3d66a4fe5",
+      "urls": ["https://xorg.freedesktop.org/archive/individual/lib/libXtst-1.2.6.tar.xz"],
+      "checked_on": "2026-11-03",
+      "license_status": "component-notices-inspected; preserve-all-notices",
+      "license_files": ["COPYING"],
+      "license": "LicenseRef-XOrg-libXtst",
+      "selected_license": "LicenseRef-XOrg-libXtst",
+      "platforms": ["linux"],
+      "purpose": "SDL XTEST support with private X11/Xext/Xi dependencies",
+      "hash_authority": "SHA256 of official X.Org release archive bytes",
+      "patches": []
+    }
+  }
+}

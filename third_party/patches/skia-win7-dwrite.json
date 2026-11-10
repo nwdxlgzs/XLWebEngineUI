@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "upstream": "Skia c40d8c9ce6295b8d21a6ad6ef95522729bbadba7",
+  "file": "src/utils/win/SkDWrite.cpp",
+  "description": "Retain current DirectWrite interfaces and runtime QueryInterface fallbacks. On Win7 without KB2533623, load the system dwrite.dll using an absolute System32 path if secure-search flags are unsupported; do not search the working directory.",
+  "replacements": [
+    {
+      "before": "static void create_dwrite_factory(IDWriteFactory** factory) {",
+      "after": "static HMODULE xl_load_system_dwrite() {\n    HMODULE module = LoadLibraryExW(L\"dwrite.dll\", NULL, LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);\n    if (module || GetLastError() != ERROR_INVALID_PARAMETER) {\n        return module;\n    }\n    WCHAR path[MAX_PATH];\n    const UINT length = GetSystemDirectoryW(path, MAX_PATH);\n    constexpr WCHAR suffix[] = L\"\\\\dwrite.dll\";\n    if (length == 0 || length >= MAX_PATH || length + sizeof(suffix) / sizeof(WCHAR) > MAX_PATH) {\n        return nullptr;\n    }\n    for (size_t index = 0; index < sizeof(suffix) / sizeof(WCHAR); ++index) {\n        path[length + index] = suffix[index];\n    }\n    return LoadLibraryW(path);\n}\n\nstatic void create_dwrite_factory(IDWriteFactory** factory) {"
+    },
+    {
+      "before": "LoadLibraryExW(L\"dwrite.dll\", NULL, LOAD_LIBRARY_SEARCH_DEFAULT_DIRS),",
+      "after": "xl_load_system_dwrite(),"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.20)
+project(XLDocumentExample LANGUAGES CXX)
+find_package(XLWebEngineUI CONFIG REQUIRED)
+add_executable(xl_document_example main.cpp)
+target_link_libraries(xl_document_example PRIVATE XLWebEngineUI::Shared)

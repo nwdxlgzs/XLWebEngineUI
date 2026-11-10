@@ -1,0 +1,185 @@
+{
+  "schema": 1,
+  "revision": "a0ea93436c528ca316a6e698e483e258839101a5",
+  "source": "https://chromium.googlesource.com/chromium/deps/icu",
+  "profile": "common",
+  "filter_sha256": "9d2d5b81b93fd6b2cbe3726a36db474fce2faef5caabf57fb4aa2bd94d4a0e6f",
+  "filter_git_blob": "582ca057efdbd19d8cf1929d4427bda58155ff9f",
+  "mirror": "https://github.com/chromium-full-mirror/chromium_deps_icu",
+  "mappings": [
+    {
+      "name": "big5-html.ucm",
+      "git_blob": "efd3950934ccc0fba6372eaf52b0422c02d100ab",
+      "sha256": "9a4cbeb2ecb3535517541da814655a5dcaf63db503991882bf6a205a971daaeb"
+    },
+    {
+      "name": "convrtrs.txt",
+      "git_blob": "8351b229883ce41e18ef395df8b5660f0f05bfbd",
+      "sha256": "66af7219ff12863aaa2ec382fd65f543424f1d7408bdb044de884ecb7328753d"
+    },
+    {
+      "name": "euc-jp-html.ucm",
+      "git_blob": "e5b41aa692320d6230d8d52861a0756d6e83f10b",
+      "sha256": "6ba9f130874676150ddb2f69511ed954c5a3fbfdfc1dbdaca1e5cdfd644c9088"
+    },
+    {
+      "name": "euc-kr-html.ucm",
+      "git_blob": "34272a45898dd8e58658891f19182bd0d39686ca",
+      "sha256": "5120b2b018dd760db004a976ff67dc1a32d37eebf8d8692020ce051fb6325d9e"
+    },
+    {
+      "name": "ibm866-html.ucm",
+      "git_blob": "d9eb77edf924a71369e8f80d643a5374bfbcfa3a",
+      "sha256": "ac70eaa3e0d94c03061dce4273f6be65906c01c4969b96da6649154f821d3427"
+    },
+    {
+      "name": "iso-8859-10-html.ucm",
+      "git_blob": "02a316035e92c7f5a99018069ef8c24c07198bda",
+      "sha256": "ba528b5456fa418a15455f8cc8f1521e2ff187d9ba3e17ddd70c42dc07c7bb2e"
+    },
+    {
+      "name": "iso-8859-13-html.ucm",
+      "git_blob": "032ef40107d963e5eb2297117cad29263dfe9c11",
+      "sha256": "2992f00ad15bd958f812b445bd2898d1470f63963a27f0c9b0db617aba231182"
+    },
+    {
+      "name": "iso-8859-14-html.ucm",
+      "git_blob": "4c7faa22259cf54f4ec57ba667910716369fc4b1",
+      "sha256": "4f4ddf03fe78b9fac157ba086ff23a059962bf342af2d47939e6af6bf324bd9f"
+    },
+    {
+      "name": "iso-8859-15-html.ucm",
+      "git_blob": "75f173131ec30f64e34385b96297763dc6c5173a",
+      "sha256": "b2a552b732ccd2f0a3727f64357e6206d1675da8a1663b9032e11b8a5ec6a95a"
+    },
+    {
+      "name": "iso-8859-16-html.ucm",
+      "git_blob": "de33bd5726e64ab59bd33423eb11aabee3f62da7",
+      "sha256": "6f189adb43b67c64486c15ebe01f30aa871aa87f2075b4cbd2672ac23e57ebea"
+    },
+    {
+      "name": "iso-8859-2-html.ucm",
+      "git_blob": "2b464404146e033cdf22e4af998d6a1fc23ede5f",
+      "sha256": "d51e96b4ed13196dba73874dc29cd41b34f43a8303841d2ef18f48670c0a46f0"
+    },
+    {
+      "name": "iso-8859-3-html.ucm",
+      "git_blob": "27196db7dc6d0fa4b1ad648302e8efdfe74e060f",
+      "sha256": "5921d3f63216396be84de31ad88087760546d9e15e9eba5d03ae5bbf9b4696bd"
+    },
+    {
+      "name": "iso-8859-4-html.ucm",
+      "git_blob": "ae0721d96c91219db2d2cf67ad282972e79ab083",
+      "sha256": "68525fdf6e62dcbbbc925610e5dca770af1e2ec88ebb4faabdf73962f1751409"
+    },
+    {
+      "name": "iso-8859-5-html.ucm",
+      "git_blob": "d53740a251bd9272c3d47c9b20f7825176d06c7f",
+      "sha256": "203a82074375951a0d53ffd7dfa1b3532d2c329356a81063c52508056a736a09"
+    },
+    {
+      "name": "iso-8859-6-html.ucm",
+      "git_blob": "f42223f8b2760ac6dcb811836f506f251db0761c",
+      "sha256": "dfe84c4b12e0abfd0a79a7cf362e6cec67cd42a7909c8fb6924b1ea8acbb491b"
+    },
+    {
+      "name": "iso-8859-7-html.ucm",
+      "git_blob": "7537e86c790437dc88e6adce59e4b6493412bc3c",
+      "sha256": "1a632e59d87d1e254b67d331399a228c86ab72843627c279301e75f5d1f1da15"
+    },
+    {
+      "name": "iso-8859-8-html.ucm",
+      "git_blob": "7529de3a77852b6b15a22277b4473fd0272c55ab",
+      "sha256": "e60a3a7ab2353a157297b325ea65bfc8a404bc45f5916d918cc3759dfe0b94c6"
+    },
+    {
+      "name": "koi8-r-html.ucm",
+      "git_blob": "e8b9fd94a10aa2c466d1d406df94bef4429eef7d",
+      "sha256": "aa1a4f6a77881b7a556bc427cff44829715bd0bede2574f4986c9ab8da4f2092"
+    },
+    {
+      "name": "koi8-u-html.ucm",
+      "git_blob": "77dae2cb99653d5ff14668a615317ef1702888dc",
+      "sha256": "81544f66af9640b62068b1f906fd7c74e8f98f7d69119c9f3804a7e6163cdda0"
+    },
+    {
+      "name": "macintosh-html.ucm",
+      "git_blob": "de7a0ee4eca91115270a5b96471871fdd7d02b32",
+      "sha256": "c3aaba3505a1de21a7f1e3287fa0a86b2db6f0d2fd37fdaa68640b131d5a95a7"
+    },
+    {
+      "name": "shift_jis-html.ucm",
+      "git_blob": "c2627af6b642ada774edb03a33f844ba46556722",
+      "sha256": "38991a65282d9f6855cc7a4146c091853729b70f405a2d74dc45b4ba23dfdc22"
+    },
+    {
+      "name": "windows-1250-html.ucm",
+      "git_blob": "06d08f7d146b8306dd452e35318211efa5c690a7",
+      "sha256": "82c1ba3ec8d05ed50ba01c6317453e16b219f72d70801df3120243bc7a42e443"
+    },
+    {
+      "name": "windows-1251-html.ucm",
+      "git_blob": "ead28bd057e4471088cdc538a9d73c1e60578b13",
+      "sha256": "81286b496b1f126b9e23ce937687e89c6b934133d88a56ade45c0900259219f8"
+    },
+    {
+      "name": "windows-1252-html.ucm",
+      "git_blob": "0484d124072dd1c27df0e13888222159a3b56857",
+      "sha256": "620e0af3f1f2c7a99cc4ed30e4811702f89654c6ed866bca314aa105afb3c72f"
+    },
+    {
+      "name": "windows-1253-html.ucm",
+      "git_blob": "e481c7f83ae00165eab9df472262463b377b7c1e",
+      "sha256": "25cecaf21fb7be0d05e7ff1f0daf9f7fd4435352206b38f3a65536fece74288a"
+    },
+    {
+      "name": "windows-1254-html.ucm",
+      "git_blob": "0ffa5b531e2893870740290c170f293eb715d881",
+      "sha256": "4b16d0a1a9721fa5375a99f9de1f71914a3b8210a5af71de2e3087ebc8f8ac6a"
+    },
+    {
+      "name": "windows-1255-html.ucm",
+      "git_blob": "c5fe40bfc68d83b1b01982e5e15f9fabc56df8fe",
+      "sha256": "d00570448bb83d15097f28776508cd6c449db6e4c0dfb276fa602575dc691479"
+    },
+    {
+      "name": "windows-1256-html.ucm",
+      "git_blob": "9bc580cadf51f9acd56851c86579165c578f6490",
+      "sha256": "9d3ac7fc2ee3d2fb867b9eb625cb0032e339a33a1f82d77e677aeaddc455a55e"
+    },
+    {
+      "name": "windows-1257-html.ucm",
+      "git_blob": "fe6c8f0ed0c21a14c4777746f89e065bb05e1360",
+      "sha256": "623b79c161fa69f81d3df15c0d3e56c9c9aaacca9a5f14987b53f98bfce9cdad"
+    },
+    {
+      "name": "windows-1258-html.ucm",
+      "git_blob": "e8f1ddb072dbb1824a3a43b87a97f235e61479e7",
+      "sha256": "b8ef5300bb50b06b9376d9fde031c524a61dacec3d400b7bda3e0c4f21ed00b6"
+    },
+    {
+      "name": "windows-874-html.ucm",
+      "git_blob": "3a7c02f9b2be41e38471ab1d31c0aad1c887e2f7",
+      "sha256": "0b5fa6134f804fdf056027bd31569d2269be870d33870c56ebc3eb471a91434c"
+    },
+    {
+      "name": "x-mac-cyrillic-html.ucm",
+      "git_blob": "4f935f85f0a058e34069c4831b9d38765c21d16e",
+      "sha256": "9de6d36f25044d11befc3ac59e3253f14cb82c4287cd25116c055015b99ae7d6"
+    },
+    {
+      "name": "windows-936-2000.ucm",
+      "git_blob": "66c9a313fd016a879379a44dd696f8b047fa3159",
+      "sha256": "971e98da66a001b843e32cacdb6aad26e341bc37b7b96e0170cab97b18154a4f"
+    }
+  ],
+  "data_source": {
+    "archive": "icu4c-79.1-data.zip",
+    "archive_root": "data",
+    "bytes": 20394228,
+    "sha256": "b3a430009bb5fab77b1a4b98fab85cc8f887e26d4e4166121724298ae14d7224",
+    "urls": [
+      "https://github.com/unicode-org/icu/releases/download/release-79.1/icu4c-79.1-data.zip"
+    ]
+  }
+}
