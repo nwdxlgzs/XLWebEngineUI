@@ -2,6 +2,8 @@
 
 更新时间：2026-11-10（Asia/Shanghai，仅维护记录更新）。先读AGENTS/PLAN/TODO，RAW只读。此文件UTF-8≤40,000字节，仅保存续接所需事实；完整证据见TODO、docs、git。
 
+2026-11-10最新决定：用户明确仓库公开。nwdxlgzs/XLWebEngineUI现为public，认证API核private=false，匿名Git读取main同本地；交接记录同步推送，证据build/reports/repository-publish/20261110/public-visibility.json。下述私有为最初创建状态；本次不恢复引擎开发。
+
 2026-11-10用户授权敏感信息清理/新建默认GitHub账号私有仓库并推送，已完成；覆盖旧日常“不自动push”的限制仅限本次交付。私有origin=nwdxlgzs/XLWebEngineUI、默认main，初始清理快照1ba2554（工作区原无.git，旧提交号仅历史证据索引）。文档本机绝对路径转相对，凭据/IDE/诊断输出忽略，作者noreply；RAW、9用户HTML和三方锁/原许可/必要FXC DLL保留。424个真实暂存文件与Git提交Gitleaks v8.30.1扫描0发现，工具SHA/RAW与9页逐字节核同。API/ls-remote核同commit，远端全部424个blob逐项同本地；未上传build，认证仅系统凭据管理器内存使用。最终commit/tree与复核见build/reports/repository-publish/20261110/report.json及origin/main；原功能开发仍暂停，不自动恢复Linux构建。
 
 2026-11-09/10用户授权C盘缓存安全清理已完成：go clean -cache、pip cache purge及双位置npm cache clean均退出0；独占DELETE句柄/最终路径检查后清NVIDIA/DirectX5.629GiB、VSCode1.740GiB、npx0.688GiB及>7天创建/修改的Temp27.375GiB（含旧WSL swap8.004GiB），共188053条逐文件删除记录核数量/字节及授权范围一致。另Go约6.459GiB、pip约1.70GiB及npm下载缓存由原生命令清。C盘空闲23.25→约68.08GiB，观测净增约44.83GiB，不与逻辑字节和混同。14锁定NV文件/73最终路径不可验证npx文件保留；近期、工具链/runtime、Git目录、链接/只读/其他虚拟盘保留。Go/pip余228/1436bytes，npm本地约8.7MB，VSCode7缓存目录余0；User/Backups/已安装扩展、.cache运行环境/安装维护缓存存在。报告build/reports/c-drive-cache-cleanup/20261109T155301Z/report.json及verification.json，辅助脚本全清。原项目开发仍暂停，无新构建/SDK。

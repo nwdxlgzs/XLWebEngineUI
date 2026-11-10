@@ -2,6 +2,8 @@
 
 更新时间：2026-11-10（Asia/Shanghai，仅仓库交付维护）。原始基线为只读的 `RAW-PLAN.MD`。
 
+2026-11-10用户随后明确改为公开仓库。nwdxlgzs/XLWebEngineUI现已公开，认证API核实private=false、visibility=public，无认证Git读取main成功。同步交接记录并推送；原引擎开发保持暂停，不运行构建或完整CI。证据build/reports/repository-publish/20261110/public-visibility.json。
+
 2026-11-10用户授权清理敏感信息并新建远程仓库推送。本次仅做源码交付：按默认GitHub账号创建私有XLWebEngineUI仓库，当前检出原已无.git，建立清理后的新main初始提交，不伪造旧历史。文档本机绝对路径改为相对路径，补本地凭据/诊断输出忽略规则，作者使用GitHub noreply邮箱；扫描实际待提交文件和最终提交，保留原始计划、用户网页、三方原许可/锁源/必要再分发DLL，排除build和本地凭据。远端创建/推送后核仓库可见性、分支commit与源码树；原功能开发继续暂停，无功能构建或新SDK结论。
 
 2026-11-09/10独立C盘缓存维护已完成：按用户指定仅清Go编译、pip/npm下载、npx、NVIDIA/DirectX、VSCode缓存及>7天且无占用的用户Temp，旧WSL swap单独核停机/独占后清除；保留近期文件、工具链/runtime、Git目录、链接、只读/锁定文件及用户配置。C盘观测空闲净增约44.83GiB；逐文件范围/数量/字节核验passed，报告build/reports/c-drive-cache-cleanup/20261109T155301Z/report.json。维护不恢复暂停开发，不做项目构建或SDK交付。
